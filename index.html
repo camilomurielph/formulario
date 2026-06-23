@@ -16,26 +16,43 @@
 
         <!-- Contenedor principal -->
         <main>
-            <!-- Barra de progreso -->
-            <div id="progress-bar">
+            <!-- Barra de progreso (solo visible en modo formulario) -->
+            <div id="progress-bar" class="form-mode">
                 <div id="progress-fill"></div>
             </div>
+            <div id="step-indicator" class="form-mode">Pregunta 1 de 20</div>
 
-            <!-- Indicador de paso -->
-            <div id="step-indicator">Pregunta 1 de 20</div>
+            <!-- Contenedor de preguntas (modo formulario) -->
+            <div id="question-container" class="form-mode"></div>
 
-            <!-- Aquí se renderiza la pregunta actual -->
-            <div id="question-container"></div>
-
-            <!-- Navegación -->
-            <div id="navigation">
+            <!-- Navegación (modo formulario) -->
+            <div id="navigation" class="form-mode">
                 <button id="prev-btn" class="nav-btn" disabled>⬅ Anterior</button>
                 <button id="next-btn" class="nav-btn">Siguiente ➡</button>
             </div>
 
-            <!-- Botón de envío (se muestra al final) -->
-            <div id="submit-section" style="display: none;">
+            <!-- Botón de envío (modo formulario) -->
+            <div id="submit-section" class="form-mode" style="display: none;">
                 <button id="submit-btn">📤 Enviar respuestas</button>
+            </div>
+
+            <!-- ===== PANEL DE ADMINISTRACIÓN ===== -->
+            <div id="admin-panel" style="display: none;">
+                <!-- Botones de acción principal -->
+                <div id="admin-actions">
+                    <button id="view-responses-btn" class="admin-btn">📋 Ver respuestas</button>
+                    <button id="download-excel-btn" class="admin-btn">📥 Descargar Excel</button>
+                    <button id="manage-responses-btn" class="admin-btn">🗂️ Administrar respuestas</button>
+                    <button id="logout-btn" class="admin-btn logout">🚪 Cerrar sesión</button>
+                </div>
+
+                <!-- Contenedor para mostrar contenido (tabla o bloques) -->
+                <div id="admin-content"></div>
+            </div>
+
+            <!-- Botón de acceso a admin (visible siempre) -->
+            <div id="admin-trigger">
+                <button id="admin-login-btn">🔐 Admin</button>
             </div>
         </main>
 
@@ -43,11 +60,17 @@
         <div id="toast"></div>
     </div>
 
-    <!-- Librería para exportar a Excel -->
+    <!-- Modal para visualizar respuesta individual -->
+    <div id="response-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Detalles de la respuesta</h2>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Datos del cuestionario -->
     <script src="questions.js"></script>
-    <!-- Lógica principal -->
     <script src="app.js"></script>
 </body>
 </html>
