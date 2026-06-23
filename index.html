@@ -6,6 +6,8 @@
         <title>Encuesta — ¿En qué gasta más tiempo tu empresa?</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
         <style>
+            /* (Mantén todo tu CSS exactamente igual, no lo repito por espacio) */
+            /* ... copia el CSS de tu versión anterior ... */
             :root {
                 --purple: #534ab7;
                 --purple-light: #eeedfe;
@@ -1181,13 +1183,11 @@
 
         <script>
             // ================================================================
-            //  CONFIGURACIÓN DE GITHUB (ya insertada)
+            //  CONFIGURACIÓN DE GIST
             // ================================================================
+            const GIST_ID = "2c86dc23a6fcf1a1d2b24a65c6c89164"; // <-- REEMPLAZA con el ID de tu Gist
             const GITHUB_TOKEN =
-                "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";
-            const GITHUB_OWNER = "camilomurielph";
-            const GITHUB_REPO = "camdatabase";
-            const GITHUB_PATH = "formulario/respuestas.json";
+                "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"; // <-- REEMPLAZA con tu token
 
             let responses = JSON.parse(
                 localStorage.getItem("encuesta_responses") || "[]",
@@ -1212,6 +1212,10 @@
                 "q18",
             ];
 
+            // ================================================================
+            //  FUNCIONES AUXILIARES (selectOpt, getVal, getRadio, updateProgress, validate)
+            //  SON IGUALES QUE ANTES, LAS MANTENEMOS SIN CAMBIOS
+            // ================================================================
             function selectOpt(input) {
                 const name = input.name;
                 document
@@ -1313,13 +1317,13 @@
             }
 
             // ================================================================
-            //  FUNCIÓN PARA GUARDAR EN GITHUB
+            //  FUNCIÓN PARA GUARDAR EN GIST
             // ================================================================
-            async function saveToGitHub(newResponse) {
-                const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
+            async function saveToGist(newResponse) {
+                const url = `https://api.github.com/gists/${GIST_ID}`;
 
                 try {
-                    // 1. Obtener el archivo actual y su SHA
+                    // 1. Obtener el Gist actual
                     const getRes = await fetch(url, {
                         headers: {
                             Authorization: `Bearer ${GITHUB_TOKEN}`,
@@ -1329,53 +1333,54 @@
 
                     if (!getRes.ok) {
                         throw new Error(
-                            `Error al leer el archivo: ${getRes.status}`,
+                            `Error al leer el Gist: ${getRes.status}`,
                         );
                     }
 
-                    const fileData = await getRes.json();
-                    const sha = fileData.sha;
-                    const currentContent = atob(fileData.content);
+                    const gistData = await getRes.json();
+                    // El contenido está en gistData.files["respuestas.json"].content
+                    const currentContent =
+                        gistData.files["respuestas.json"].content;
                     const currentJson = JSON.parse(currentContent);
 
                     // 2. Agregar la nueva respuesta
                     currentJson.push(newResponse);
 
-                    // 3. Codificar a Base64
-                    const newContent = btoa(
-                        unescape(encodeURIComponent(JSON.stringify(currentJson, null, 2))),
-                    );
+                    // 3. Preparar la actualización
+                    const newContent = JSON.stringify(currentJson, null, 2);
 
-                    // 4. Subir el archivo actualizado
-                    const putRes = await fetch(url, {
-                        method: "PUT",
+                    // 4. Actualizar el Gist
+                    const patchRes = await fetch(url, {
+                        method: "PATCH",
                         headers: {
                             Authorization: `Bearer ${GITHUB_TOKEN}`,
                             "Content-Type": "application/json",
                             Accept: "application/vnd.github.v3+json",
                         },
                         body: JSON.stringify({
-                            message: "Nueva respuesta de encuesta",
-                            content: newContent,
-                            sha: sha,
+                            files: {
+                                "respuestas.json": {
+                                    content: newContent,
+                                },
+                            },
                         }),
                     });
 
-                    if (!putRes.ok) {
+                    if (!patchRes.ok) {
                         throw new Error(
-                            `Error al guardar en GitHub: ${putRes.status}`,
+                            `Error al actualizar el Gist: ${patchRes.status}`,
                         );
                     }
 
                     return { success: true };
                 } catch (error) {
-                    console.error("❌ Error en GitHub:", error);
+                    console.error("❌ Error en Gist:", error);
                     return { success: false, error: error.message };
                 }
             }
 
             // ================================================================
-            //  FUNCIÓN SUBMIT (MODIFICADA PARA USAR GITHUB)
+            //  FUNCIÓN SUBMIT (MODIFICADA PARA USAR GIST)
             // ================================================================
             async function submitForm() {
                 const btn = document.getElementById("submitBtn");
@@ -1427,7 +1432,7 @@
 
                 console.log("📦 Datos a enviar:", row);
 
-                // --- Guardar localmente (siempre) ---
+                // --- Guardar localmente ---
                 const rowWithMeta = {
                     num: responses.length + 1,
                     ...row,
@@ -1442,14 +1447,14 @@
                 document.getElementById("exportBtn").disabled = false;
                 showToast("✅ Respuesta guardada localmente.", "success");
 
-                // --- Guardar en GitHub ---
-                const result = await saveToGitHub(row);
+                // --- Guardar en Gist ---
+                const result = await saveToGist(row);
 
                 if (result.success) {
-                    showToast("✅ Datos guardados en GitHub.", "success");
+                    showToast("✅ Datos guardados en Gist.", "success");
                 } else {
                     showToast(
-                        "❌ Error al guardar en GitHub: " + result.error,
+                        "❌ Error al guardar en Gist: " + result.error,
                         "error",
                     );
                 }
@@ -1460,7 +1465,7 @@
             }
 
             // ================================================================
-            //  RESTO DE FUNCIONES (renderTable, resetForm, exportToExcel, etc.)
+            //  RESTO DE FUNCIONES (renderTable, resetForm, exportToExcel, showToast)
             //  se mantienen igual que antes
             // ================================================================
             function renderTable() {
