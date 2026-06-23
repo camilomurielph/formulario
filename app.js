@@ -31,7 +31,7 @@ const stepIndicator = document.getElementById('step-indicator');
 const toast = document.getElementById('toast');
 
 // ================================================================
-// RENDERIZAR PREGUNTA ACTUAL
+// RENDERIZAR PREGUNTA ACTUAL (CORREGIDO)
 // ================================================================
 function renderQuestion(index) {
     const q = questions[index];
@@ -47,7 +47,6 @@ function renderQuestion(index) {
         html += `<div class="q-hint">${q.hint}</div>`;
     }
 
-    // Campo según tipo
     const value = answers[q.id] || '';
 
     switch (q.type) {
@@ -81,39 +80,53 @@ function renderQuestion(index) {
             break;
     }
 
-    // Error (si existe)
     html += `<div class="field-error" id="err-${q.id}">Este campo es obligatorio.</div>`;
 
     container.innerHTML = html;
 
-    // Event listeners para guardar cambios
-    const input = document.getElementById(q.id);
-    if (input) {
-        if (q.type === 'text' || q.type === 'textarea') {
+    // --- Event listeners para guardar cambios ---
+    if (q.type === 'text' || q.type === 'textarea') {
+        const input = document.getElementById(q.id);
+        if (input) {
             input.addEventListener('input', (e) => {
                 answers[q.id] = e.target.value;
                 updateProgress();
             });
-        } else if (q.type === 'select') {
-            input.addEventListener('change', (e) => {
+        }
+    } else if (q.type === 'select') {
+        const select = document.getElementById(q.id);
+        if (select) {
+            select.addEventListener('change', (e) => {
                 answers[q.id] = e.target.value;
                 updateProgress();
             });
         }
-    }
-
-    // Radios
-    if (q.type === 'radio') {
-        document.querySelectorAll(`input[name="${q.id}"]`).forEach(radio => {
+    } else if (q.type === 'radio') {
+        const radios = document.querySelectorAll(`input[name="${q.id}"]`);
+        radios.forEach(radio => {
             radio.addEventListener('change', (e) => {
                 answers[q.id] = e.target.value;
                 // Actualizar estilo de los labels
                 document.querySelectorAll(`#${q.id} .opt-label`).forEach(label => {
-                    label.classList.toggle('selected', label.querySelector('input').checked);
+                    const input = label.querySelector('input');
+                    if (input) {
+                        label.classList.toggle('selected', input.checked);
+                    }
                 });
                 updateProgress();
+                // Eliminar clase de error visual si existe
+                document.getElementById(`err-${q.id}`)?.classList.remove('visible');
             });
         });
+        // Si ya hay un valor seleccionado, asegurar que el label esté marcado
+        if (value) {
+            document.querySelectorAll(`#${q.id} .opt-label`).forEach(label => {
+                const input = label.querySelector('input');
+                if (input && input.value === value) {
+                    label.classList.add('selected');
+                }
+            });
+        }
     }
 
     // Actualizar botones y progreso
@@ -142,7 +155,6 @@ function updateButtons() {
     prevBtn.disabled = currentIndex === 0;
     const isLast = currentIndex === totalQuestions - 1;
     nextBtn.textContent = isLast ? '📤 Enviar' : 'Siguiente ➡';
-    // Si es la última, el botón "Siguiente" envía directamente
     if (isLast) {
         nextBtn.onclick = () => {
             if (validateCurrent()) {
@@ -156,12 +168,11 @@ function updateButtons() {
             }
         };
     }
-    // El botón "Anterior" siempre navega
     prevBtn.onclick = () => goTo(currentIndex - 1);
 }
 
 // ================================================================
-// VALIDACIÓN DE LA PREGUNTA ACTUAL
+// VALIDACIÓN DE LA PREGUNTA ACTUAL (CORREGIDO)
 // ================================================================
 function validateCurrent() {
     const q = questions[currentIndex];
@@ -170,69 +181,80 @@ function validateCurrent() {
     const errEl = document.getElementById(`err-${q.id}`);
     let val = '';
 
-    const input = document.getElementById(q.id);
-    if (input) {
-        if (q.type === 'text' || q.type === 'textarea') {
+    // Obtener valor según tipo
+    if (q.type === 'text' || q.type === 'textarea') {
+        const input = document.getElementById(q.id);
+        if (input) {
             val = input.value.trim();
-        } else if (q.type === 'select') {
-            val = input.value;
+            input.classList.toggle('invalid', !val);
         }
-        input.classList.toggle('invalid', !val);
+    } else if (q.type === 'select') {
+        const select = document.getElementById(q.id);
+        if (select) {
+            val = select.value;
+            select.classList.toggle('invalid', !val);
+        }
     } else if (q.type === 'radio') {
         const checked = document.querySelector(`input[name="${q.id}"]:checked`);
-        val = checked ? checked.value : '';
-        // Marcar como inválido visualmente (opcional)
+        if (checked) {
+            val = checked.value;
+            // Sincronizar answers
+            answers[q.id] = val;
+        } else {
+            val = '';
+        }
+        // Marcar visualmente los labels (solo para feedback)
         document.querySelectorAll(`#${q.id} .opt-label`).forEach(label => {
-            label.style.borderColor = val ? '' : 'var(--border)';
+            const radio = label.querySelector('input');
+            if (radio) {
+                label.style.borderColor = radio.checked ? '' : 'var(--border)';
+            }
         });
     }
 
-    if (errEl) {
-        errEl.classList.toggle('visible', !val);
-    }
-
+    // Mostrar/ocultar error y marcar inválido
     if (!val) {
-        // Scroll al error
-        const firstInvalid = document.querySelector('.invalid, .field-error.visible');
-        if (firstInvalid) {
-            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (errEl) errEl.classList.add('visible');
+        // Marcar el campo como inválido visualmente
+        if (q.type === 'text' || q.type === 'textarea' || q.type === 'select') {
+            const el = document.getElementById(q.id);
+            if (el) el.classList.add('invalid');
         }
         return false;
+    } else {
+        if (errEl) errEl.classList.remove('visible');
+        if (q.type === 'text' || q.type === 'textarea' || q.type === 'select') {
+            const el = document.getElementById(q.id);
+            if (el) el.classList.remove('invalid');
+        }
+        // Actualizar answers para consistencia (excepto radios que ya se actualizaron)
+        if (q.type !== 'radio') {
+            answers[q.id] = val;
+        }
+        return true;
     }
-    return true;
 }
 
 // ================================================================
-// PROGRESO
+// PROGRESO (CORREGIDO)
 // ================================================================
 function updateProgress() {
-    // Contar cuántas preguntas obligatorias están respondidas
-    let filled = 0;
-    questions.forEach(q => {
-        if (!q.required) return;
-        const val = answers[q.id] || '';
-        if (val && val.trim && val.trim() !== '') filled++;
-        else if (val && typeof val === 'string' && val !== '') filled++;
-        else if (val && typeof val === 'string' && val.trim() === '') return;
-        else if (val) filled++;
-    });
-    // También contar radios
-    questions.forEach(q => {
-        if (!q.required || q.type !== 'radio') return;
-        const checked = document.querySelector(`input[name="${q.id}"]:checked`);
-        if (checked) filled++;
-    });
-    // Pero para no contar doble, mejor usamos el objeto answers
-    // Recalculamos con answers
     let filledCorrect = 0;
     questions.forEach(q => {
         if (!q.required) return;
         const val = answers[q.id];
-        if (val && val.trim && val.trim() !== '') filledCorrect++;
-        else if (val && typeof val === 'string' && val !== '') filledCorrect++;
-        else if (val && typeof val === 'string' && val.trim() === '') return;
-        else if (val) filledCorrect++;
-        else if (q.type === 'radio' && document.querySelector(`input[name="${q.id}"]:checked`)) filledCorrect++;
+        // Para radios, verificar si hay algún checked en el DOM (por si no está en answers)
+        if (q.type === 'radio') {
+            const checked = document.querySelector(`input[name="${q.id}"]:checked`);
+            if (checked) {
+                filledCorrect++;
+                return;
+            }
+        }
+        // Para otros tipos
+        if (val && typeof val === 'string' && val.trim() !== '') {
+            filledCorrect++;
+        }
     });
 
     const totalRequired = questions.filter(q => q.required).length;
@@ -242,7 +264,7 @@ function updateProgress() {
 }
 
 // ================================================================
-// ENVÍO A GIST
+// ENVÍO A GIST (sin cambios)
 // ================================================================
 async function saveToGist(newResponse) {
     const url = `https://api.github.com/gists/${GIST_ID}`;
@@ -285,7 +307,7 @@ async function saveToGist(newResponse) {
 }
 
 // ================================================================
-// FUNCIÓN SUBMIT
+// FUNCIÓN SUBMIT (sin cambios)
 // ================================================================
 async function submitForm() {
     // Validar todas las preguntas obligatorias antes de enviar
@@ -293,8 +315,15 @@ async function submitForm() {
         const q = questions[i];
         if (!q.required) continue;
         const val = answers[q.id] || '';
-        if (!val || (typeof val === 'string' && val.trim() === '')) {
-            // Ir a la pregunta que falta
+        // También verificar radios en el DOM
+        let isValid = false;
+        if (q.type === 'radio') {
+            const checked = document.querySelector(`input[name="${q.id}"]:checked`);
+            if (checked) isValid = true;
+        } else {
+            if (val && typeof val === 'string' && val.trim() !== '') isValid = true;
+        }
+        if (!isValid) {
             currentIndex = i;
             renderQuestion(currentIndex);
             showToast('Por favor completa todas las preguntas obligatorias.', 'error');
@@ -349,7 +378,6 @@ async function submitForm() {
         currentIndex = 0;
         renderQuestion(0);
         updateProgress();
-        // Actualizar tabla de respuestas (si existiera) - no se usa en esta versión
     } else {
         showToast('❌ Error al guardar: ' + result.error, 'error');
     }
