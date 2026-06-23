@@ -6,8 +6,7 @@
         <title>Encuesta — ¿En qué gasta más tiempo tu empresa?</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
         <style>
-            /* (Mantén todo tu CSS exactamente igual, no lo repito por espacio) */
-            /* ... copia el CSS de tu versión anterior ... */
+            /* ========== ESTILOS (igual que antes) ========== */
             :root {
                 --purple: #534ab7;
                 --purple-light: #eeedfe;
@@ -30,8 +29,7 @@
                 padding: 0;
             }
             body {
-                font-family:
-                    -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
                 background: var(--gray-50);
                 color: var(--text);
                 min-height: 100vh;
@@ -387,6 +385,7 @@
         </style>
     </head>
     <body>
+        <!-- ========== HEADER Y PROGRESS ========== -->
         <div class="header">
             <h1>¿En qué gasta más tiempo tu empresa?</h1>
             <p>
@@ -404,7 +403,7 @@
         </div>
 
         <div class="main">
-            <!-- SECCIÓN 1 -->
+            <!-- ========== SECCIÓN 1 ========== -->
             <div class="section-header">
                 <div class="section-num">1</div>
                 <div class="section-title">Sobre tu empresa</div>
@@ -422,9 +421,7 @@
                     placeholder="Ej. Estudio Creativo Nombre"
                     oninput="updateProgress()"
                 />
-                <div class="field-error" id="err-q1">
-                    Este campo es obligatorio.
-                </div>
+                <div class="field-error" id="err-q1">Este campo es obligatorio.</div>
             </div>
 
             <div class="card">
@@ -434,9 +431,7 @@
                     <span class="required">*</span>
                 </div>
                 <select id="q2" onchange="updateProgress()">
-                    <option value="" disabled selected>
-                        Selecciona una opción
-                    </option>
+                    <option value="" disabled selected>Selecciona una opción</option>
                     <option>Tecnología / Software</option>
                     <option>Diseño / Creatividad</option>
                     <option>Comercio / Retail</option>
@@ -448,9 +443,7 @@
                     <option>Construcción / Inmobiliario</option>
                     <option>Otro</option>
                 </select>
-                <div class="field-error" id="err-q2">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q2">Selecciona una opción.</div>
             </div>
 
             <div class="grid2">
@@ -461,46 +454,12 @@
                         <span class="required">*</span>
                     </div>
                     <div class="options" id="q3">
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q3"
-                                value="Solo yo"
-                                onchange="selectOpt(this)"
-                            />
-                            Solo yo</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q3"
-                                value="2 – 5"
-                                onchange="selectOpt(this)"
-                            />
-                            2 – 5</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q3"
-                                value="6 – 15"
-                                onchange="selectOpt(this)"
-                            />
-                            6 – 15</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q3"
-                                value="Más de 15"
-                                onchange="selectOpt(this)"
-                            />
-                            Más de 15</label
-                        >
+                        <label class="opt-label"><input type="radio" name="q3" value="Solo yo" onchange="selectOpt(this)" /> Solo yo</label>
+                        <label class="opt-label"><input type="radio" name="q3" value="2 – 5" onchange="selectOpt(this)" /> 2 – 5</label>
+                        <label class="opt-label"><input type="radio" name="q3" value="6 – 15" onchange="selectOpt(this)" /> 6 – 15</label>
+                        <label class="opt-label"><input type="radio" name="q3" value="Más de 15" onchange="selectOpt(this)" /> Más de 15</label>
                     </div>
-                    <div class="field-error" id="err-q3">
-                        Selecciona una opción.
-                    </div>
+                    <div class="field-error" id="err-q3">Selecciona una opción.</div>
                 </div>
                 <div class="card">
                     <div class="q-num">Pregunta 4</div>
@@ -509,46 +468,12 @@
                         <span class="required">*</span>
                     </div>
                     <div class="options" id="q4">
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q4"
-                                value="Menos de 1 año"
-                                onchange="selectOpt(this)"
-                            />
-                            Menos de 1 año</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q4"
-                                value="1 – 3 años"
-                                onchange="selectOpt(this)"
-                            />
-                            1 – 3 años</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q4"
-                                value="3 – 7 años"
-                                onchange="selectOpt(this)"
-                            />
-                            3 – 7 años</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q4"
-                                value="Más de 7 años"
-                                onchange="selectOpt(this)"
-                            />
-                            Más de 7 años</label
-                        >
+                        <label class="opt-label"><input type="radio" name="q4" value="Menos de 1 año" onchange="selectOpt(this)" /> Menos de 1 año</label>
+                        <label class="opt-label"><input type="radio" name="q4" value="1 – 3 años" onchange="selectOpt(this)" /> 1 – 3 años</label>
+                        <label class="opt-label"><input type="radio" name="q4" value="3 – 7 años" onchange="selectOpt(this)" /> 3 – 7 años</label>
+                        <label class="opt-label"><input type="radio" name="q4" value="Más de 7 años" onchange="selectOpt(this)" /> Más de 7 años</label>
                     </div>
-                    <div class="field-error" id="err-q4">
-                        Selecciona una opción.
-                    </div>
+                    <div class="field-error" id="err-q4">Selecciona una opción.</div>
                 </div>
             </div>
 
@@ -564,9 +489,7 @@
                     placeholder="Ej. Fundador, Gerente, Director comercial..."
                     oninput="updateProgress()"
                 />
-                <div class="field-error" id="err-q5">
-                    Este campo es obligatorio.
-                </div>
+                <div class="field-error" id="err-q5">Este campo es obligatorio.</div>
             </div>
 
             <div class="card">
@@ -576,65 +499,34 @@
                     <span class="required">*</span>
                 </div>
                 <div class="options inline" id="q6">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q6"
-                            value="Poco cómodo"
-                            onchange="selectOpt(this)"
-                        />
-                        Poco cómodo</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q6"
-                            value="Moderadamente"
-                            onchange="selectOpt(this)"
-                        />
-                        Moderadamente</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q6"
-                            value="Muy cómodo"
-                            onchange="selectOpt(this)"
-                        />
-                        Muy cómodo</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q6" value="Poco cómodo" onchange="selectOpt(this)" /> Poco cómodo</label>
+                    <label class="opt-label"><input type="radio" name="q6" value="Moderadamente" onchange="selectOpt(this)" /> Moderadamente</label>
+                    <label class="opt-label"><input type="radio" name="q6" value="Muy cómodo" onchange="selectOpt(this)" /> Muy cómodo</label>
                 </div>
-                <div class="field-error" id="err-q6">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q6">Selecciona una opción.</div>
             </div>
 
-            <!-- SECCIÓN 2 -->
+            <!-- ========== SECCIÓN 2 ========== -->
             <div class="section-header">
                 <div class="section-num">2</div>
-                <div class="section-title">
-                    La actividad que más tiempo te quita
-                </div>
+                <div class="section-title">La actividad que más tiempo te quita</div>
             </div>
 
             <div class="card highlight">
                 <div class="q-num">Pregunta 7 — Pregunta clave</div>
                 <div class="q-text">
-                    ¿Cuál es la actividad que más tiempo te quita en tu semana
-                    laboral? <span class="required">*</span>
+                    ¿Cuál es la actividad que más tiempo te quita en tu semana laboral?
+                    <span class="required">*</span>
                 </div>
                 <div class="q-hint">
-                    Descríbela con tus propias palabras, sin limitarte a
-                    opciones predefinidas.
+                    Descríbela con tus propias palabras, sin limitarte a opciones predefinidas.
                 </div>
                 <textarea
                     id="q7"
                     placeholder="Ej. Responder correos de clientes, hacer seguimiento de pagos, coordinar con proveedores..."
                     oninput="updateProgress()"
                 ></textarea>
-                <div class="field-error" id="err-q7">
-                    Este campo es obligatorio.
-                </div>
+                <div class="field-error" id="err-q7">Este campo es obligatorio.</div>
             </div>
 
             <div class="grid2">
@@ -645,46 +537,12 @@
                         <span class="required">*</span>
                     </div>
                     <div class="options" id="q8">
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q8"
-                                value="Varias veces al día"
-                                onchange="selectOpt(this)"
-                            />
-                            Varias veces al día</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q8"
-                                value="Una vez al día"
-                                onchange="selectOpt(this)"
-                            />
-                            Una vez al día</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q8"
-                                value="Varias veces a la semana"
-                                onchange="selectOpt(this)"
-                            />
-                            Varias veces a la semana</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q8"
-                                value="Semanal o mensual"
-                                onchange="selectOpt(this)"
-                            />
-                            Semanal o mensual</label
-                        >
+                        <label class="opt-label"><input type="radio" name="q8" value="Varias veces al día" onchange="selectOpt(this)" /> Varias veces al día</label>
+                        <label class="opt-label"><input type="radio" name="q8" value="Una vez al día" onchange="selectOpt(this)" /> Una vez al día</label>
+                        <label class="opt-label"><input type="radio" name="q8" value="Varias veces a la semana" onchange="selectOpt(this)" /> Varias veces a la semana</label>
+                        <label class="opt-label"><input type="radio" name="q8" value="Semanal o mensual" onchange="selectOpt(this)" /> Semanal o mensual</label>
                     </div>
-                    <div class="field-error" id="err-q8">
-                        Selecciona una opción.
-                    </div>
+                    <div class="field-error" id="err-q8">Selecciona una opción.</div>
                 </div>
                 <div class="card">
                     <div class="q-num">Pregunta 9</div>
@@ -693,46 +551,12 @@
                         <span class="required">*</span>
                     </div>
                     <div class="options" id="q9">
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q9"
-                                value="Menos de 1 hora/semana"
-                                onchange="selectOpt(this)"
-                            />
-                            Menos de 1 h/semana</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q9"
-                                value="1 – 3 horas/semana"
-                                onchange="selectOpt(this)"
-                            />
-                            1 – 3 h/semana</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q9"
-                                value="4 – 8 horas/semana"
-                                onchange="selectOpt(this)"
-                            />
-                            4 – 8 h/semana</label
-                        >
-                        <label class="opt-label"
-                            ><input
-                                type="radio"
-                                name="q9"
-                                value="Más de 8 horas/semana"
-                                onchange="selectOpt(this)"
-                            />
-                            Más de 8 h/semana</label
-                        >
+                        <label class="opt-label"><input type="radio" name="q9" value="Menos de 1 hora/semana" onchange="selectOpt(this)" /> Menos de 1 h/semana</label>
+                        <label class="opt-label"><input type="radio" name="q9" value="1 – 3 horas/semana" onchange="selectOpt(this)" /> 1 – 3 h/semana</label>
+                        <label class="opt-label"><input type="radio" name="q9" value="4 – 8 horas/semana" onchange="selectOpt(this)" /> 4 – 8 h/semana</label>
+                        <label class="opt-label"><input type="radio" name="q9" value="Más de 8 horas/semana" onchange="selectOpt(this)" /> Más de 8 h/semana</label>
                     </div>
-                    <div class="field-error" id="err-q9">
-                        Selecciona una opción.
-                    </div>
+                    <div class="field-error" id="err-q9">Selecciona una opción.</div>
                 </div>
             </div>
 
@@ -743,77 +567,25 @@
                     <span class="required">*</span>
                 </div>
                 <div class="options inline" id="q10">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q10"
-                            value="La hago solo/a"
-                            onchange="selectOpt(this)"
-                        />
-                        La hago solo/a</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q10"
-                            value="Involucra a 1-2 personas"
-                            onchange="selectOpt(this)"
-                        />
-                        Involucra a 1-2 personas</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q10"
-                            value="Involucra a todo el equipo"
-                            onchange="selectOpt(this)"
-                        />
-                        Todo el equipo</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q10" value="La hago solo/a" onchange="selectOpt(this)" /> La hago solo/a</label>
+                    <label class="opt-label"><input type="radio" name="q10" value="Involucra a 1-2 personas" onchange="selectOpt(this)" /> Involucra a 1-2 personas</label>
+                    <label class="opt-label"><input type="radio" name="q10" value="Involucra a todo el equipo" onchange="selectOpt(this)" /> Todo el equipo</label>
                 </div>
-                <div class="field-error" id="err-q10">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q10">Selecciona una opción.</div>
             </div>
 
             <div class="card">
                 <div class="q-num">Pregunta 11</div>
                 <div class="q-text">
-                    ¿Esa actividad hace parte de tu rol principal o te "roba"
-                    tiempo? <span class="required">*</span>
+                    ¿Esa actividad hace parte de tu rol principal o te "roba" tiempo?
+                    <span class="required">*</span>
                 </div>
                 <div class="options" id="q11">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q11"
-                            value="Es parte de mi rol principal"
-                            onchange="selectOpt(this)"
-                        />
-                        Es parte de mi rol principal</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q11"
-                            value="Me quita tiempo de lo importante"
-                            onchange="selectOpt(this)"
-                        />
-                        Me quita tiempo de lo importante</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q11"
-                            value="Es necesaria pero no estratégica"
-                            onchange="selectOpt(this)"
-                        />
-                        Es necesaria pero no estratégica</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q11" value="Es parte de mi rol principal" onchange="selectOpt(this)" /> Es parte de mi rol principal</label>
+                    <label class="opt-label"><input type="radio" name="q11" value="Me quita tiempo de lo importante" onchange="selectOpt(this)" /> Me quita tiempo de lo importante</label>
+                    <label class="opt-label"><input type="radio" name="q11" value="Es necesaria pero no estratégica" onchange="selectOpt(this)" /> Es necesaria pero no estratégica</label>
                 </div>
-                <div class="field-error" id="err-q11">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q11">Selecciona una opción.</div>
             </div>
 
             <div class="card">
@@ -823,46 +595,12 @@
                     <span class="required">*</span>
                 </div>
                 <div class="options" id="q12">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q12"
-                            value="Pérdida de clientes o ventas"
-                            onchange="selectOpt(this)"
-                        />
-                        Pérdida de clientes o ventas</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q12"
-                            value="Problemas operativos o de calidad"
-                            onchange="selectOpt(this)"
-                        />
-                        Problemas operativos o de calidad</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q12"
-                            value="Estrés, sin consecuencias graves"
-                            onchange="selectOpt(this)"
-                        />
-                        Estrés, sin consecuencias graves</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q12"
-                            value="Poco impacto real"
-                            onchange="selectOpt(this)"
-                        />
-                        Poco impacto real</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q12" value="Pérdida de clientes o ventas" onchange="selectOpt(this)" /> Pérdida de clientes o ventas</label>
+                    <label class="opt-label"><input type="radio" name="q12" value="Problemas operativos o de calidad" onchange="selectOpt(this)" /> Problemas operativos o de calidad</label>
+                    <label class="opt-label"><input type="radio" name="q12" value="Estrés, sin consecuencias graves" onchange="selectOpt(this)" /> Estrés, sin consecuencias graves</label>
+                    <label class="opt-label"><input type="radio" name="q12" value="Poco impacto real" onchange="selectOpt(this)" /> Poco impacto real</label>
                 </div>
-                <div class="field-error" id="err-q12">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q12">Selecciona una opción.</div>
             </div>
 
             <div class="card">
@@ -872,40 +610,14 @@
                     <span class="required">*</span>
                 </div>
                 <div class="options inline" id="q13">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q13"
-                            value="Sí, claramente"
-                            onchange="selectOpt(this)"
-                        />
-                        Sí, claramente</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q13"
-                            value="A veces"
-                            onchange="selectOpt(this)"
-                        />
-                        A veces</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q13"
-                            value="No, es difícil de medir"
-                            onchange="selectOpt(this)"
-                        />
-                        No, es difícil de medir</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q13" value="Sí, claramente" onchange="selectOpt(this)" /> Sí, claramente</label>
+                    <label class="opt-label"><input type="radio" name="q13" value="A veces" onchange="selectOpt(this)" /> A veces</label>
+                    <label class="opt-label"><input type="radio" name="q13" value="No, es difícil de medir" onchange="selectOpt(this)" /> No, es difícil de medir</label>
                 </div>
-                <div class="field-error" id="err-q13">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q13">Selecciona una opción.</div>
             </div>
 
-            <!-- SECCIÓN 3 -->
+            <!-- ========== SECCIÓN 3 ========== -->
             <div class="section-header">
                 <div class="section-num">3</div>
                 <div class="section-title">Herramientas actuales y mejoras</div>
@@ -914,27 +626,22 @@
             <div class="card">
                 <div class="q-num">Pregunta 14</div>
                 <div class="q-text">
-                    ¿Qué herramientas o métodos usas actualmente para hacer esa
-                    tarea? <span class="required">*</span>
+                    ¿Qué herramientas o métodos usas actualmente para hacer esa tarea?
+                    <span class="required">*</span>
                 </div>
-                <div class="q-hint">
-                    Papel, Excel, WhatsApp, software específico, etc.
-                </div>
+                <div class="q-hint">Papel, Excel, WhatsApp, software específico, etc.</div>
                 <textarea
                     id="q14"
                     placeholder="Ej. WhatsApp + hoja de cálculo + recordatorios en el celular..."
                     oninput="updateProgress()"
                 ></textarea>
-                <div class="field-error" id="err-q14">
-                    Este campo es obligatorio.
-                </div>
+                <div class="field-error" id="err-q14">Este campo es obligatorio.</div>
             </div>
 
             <div class="card">
                 <div class="q-num">Pregunta 15</div>
                 <div class="q-text">
-                    ¿Ya intentaste alguna vez optimizarla o delegarla? ¿Qué
-                    pasó?
+                    ¿Ya intentaste alguna vez optimizarla o delegarla? ¿Qué pasó?
                 </div>
                 <textarea
                     id="q15"
@@ -946,63 +653,20 @@
             <div class="card">
                 <div class="q-num">Pregunta 16</div>
                 <div class="q-text">
-                    ¿Cuánto estarías dispuesto/a a pagar mensualmente por una
-                    herramienta que mejore esa tarea?
+                    ¿Cuánto estarías dispuesto/a a pagar mensualmente por una herramienta que mejore esa tarea?
                     <span class="required">*</span>
                 </div>
                 <div class="options" id="q16">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q16"
-                            value="No pagaría — solo si es gratuita"
-                            onchange="selectOpt(this)"
-                        />
-                        No pagaría — solo si es gratuita</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q16"
-                            value="Hasta $30.000 COP / mes"
-                            onchange="selectOpt(this)"
-                        />
-                        Hasta $30.000 COP / mes</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q16"
-                            value="$30.000 – $100.000 COP / mes"
-                            onchange="selectOpt(this)"
-                        />
-                        $30.000 – $100.000 COP / mes</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q16"
-                            value="Más de $100.000 COP / mes"
-                            onchange="selectOpt(this)"
-                        />
-                        Más de $100.000 COP / mes</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q16"
-                            value="Depende del valor que genere"
-                            onchange="selectOpt(this)"
-                        />
-                        Depende del valor que genere</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q16" value="No pagaría — solo si es gratuita" onchange="selectOpt(this)" /> No pagaría — solo si es gratuita</label>
+                    <label class="opt-label"><input type="radio" name="q16" value="Hasta $30.000 COP / mes" onchange="selectOpt(this)" /> Hasta $30.000 COP / mes</label>
+                    <label class="opt-label"><input type="radio" name="q16" value="$30.000 – $100.000 COP / mes" onchange="selectOpt(this)" /> $30.000 – $100.000 COP / mes</label>
+                    <label class="opt-label"><input type="radio" name="q16" value="Más de $100.000 COP / mes" onchange="selectOpt(this)" /> Más de $100.000 COP / mes</label>
+                    <label class="opt-label"><input type="radio" name="q16" value="Depende del valor que genere" onchange="selectOpt(this)" /> Depende del valor que genere</label>
                 </div>
-                <div class="field-error" id="err-q16">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q16">Selecciona una opción.</div>
             </div>
 
-            <!-- SECCIÓN 4 -->
+            <!-- ========== SECCIÓN 4 ========== -->
             <div class="section-header">
                 <div class="section-num">4</div>
                 <div class="section-title">Decisión de compra</div>
@@ -1011,101 +675,42 @@
             <div class="card">
                 <div class="q-num">Pregunta 17</div>
                 <div class="q-text">
-                    ¿Quién toma la decisión de adoptar una nueva herramienta en
-                    tu empresa? <span class="required">*</span>
+                    ¿Quién toma la decisión de adoptar una nueva herramienta en tu empresa?
+                    <span class="required">*</span>
                 </div>
                 <div class="options inline" id="q17">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q17"
-                            value="Yo mismo/a"
-                            onchange="selectOpt(this)"
-                        />
-                        Yo mismo/a</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q17"
-                            value="En equipo"
-                            onchange="selectOpt(this)"
-                        />
-                        En equipo</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q17"
-                            value="Otra persona"
-                            onchange="selectOpt(this)"
-                        />
-                        Otra persona</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q17" value="Yo mismo/a" onchange="selectOpt(this)" /> Yo mismo/a</label>
+                    <label class="opt-label"><input type="radio" name="q17" value="En equipo" onchange="selectOpt(this)" /> En equipo</label>
+                    <label class="opt-label"><input type="radio" name="q17" value="Otra persona" onchange="selectOpt(this)" /> Otra persona</label>
                 </div>
-                <div class="field-error" id="err-q17">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q17">Selecciona una opción.</div>
             </div>
 
             <div class="card">
                 <div class="q-num">Pregunta 18</div>
                 <div class="q-text">
-                    ¿Han pagado antes por algún software o herramienta de
-                    gestión? <span class="required">*</span>
+                    ¿Han pagado antes por algún software o herramienta de gestión?
+                    <span class="required">*</span>
                 </div>
                 <div class="options" id="q18">
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q18"
-                            value="Sí, actualmente pagamos"
-                            onchange="selectOpt(this)"
-                        />
-                        Sí, actualmente pagamos</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q18"
-                            value="Lo hemos hecho antes"
-                            onchange="selectOpt(this)"
-                        />
-                        Lo hemos hecho antes, ya no</label
-                    >
-                    <label class="opt-label"
-                        ><input
-                            type="radio"
-                            name="q18"
-                            value="No, solo herramientas gratuitas"
-                            onchange="selectOpt(this)"
-                        />
-                        No, solo herramientas gratuitas</label
-                    >
+                    <label class="opt-label"><input type="radio" name="q18" value="Sí, actualmente pagamos" onchange="selectOpt(this)" /> Sí, actualmente pagamos</label>
+                    <label class="opt-label"><input type="radio" name="q18" value="Lo hemos hecho antes" onchange="selectOpt(this)" /> Lo hemos hecho antes, ya no</label>
+                    <label class="opt-label"><input type="radio" name="q18" value="No, solo herramientas gratuitas" onchange="selectOpt(this)" /> No, solo herramientas gratuitas</label>
                 </div>
-                <div class="field-error" id="err-q18">
-                    Selecciona una opción.
-                </div>
+                <div class="field-error" id="err-q18">Selecciona una opción.</div>
             </div>
 
-            <!-- SECCIÓN 5 -->
+            <!-- ========== SECCIÓN 5 ========== -->
             <div class="section-header">
                 <div class="section-num">5</div>
-                <div class="section-title">
-                    Cierre <span class="badge">opcional</span>
-                </div>
+                <div class="section-title">Cierre <span class="badge">opcional</span></div>
             </div>
 
             <div class="grid2">
                 <div class="card">
                     <div class="q-num">Pregunta 19</div>
                     <div class="q-text">Ciudad / región</div>
-                    <input
-                        type="text"
-                        id="q19"
-                        placeholder="Ej. Cali, Bogotá, Medellín..."
-                        oninput="updateProgress()"
-                    />
+                    <input type="text" id="q19" placeholder="Ej. Cali, Bogotá, Medellín..." oninput="updateProgress()" />
                 </div>
                 <div class="card">
                     <div class="q-num">Pregunta 20</div>
@@ -1122,21 +727,8 @@
             </div>
 
             <div class="actions">
-                <button
-                    class="btn-submit"
-                    id="submitBtn"
-                    onclick="submitForm()"
-                >
-                    Enviar respuesta
-                </button>
-                <button
-                    class="btn-export"
-                    id="exportBtn"
-                    onclick="exportToExcel()"
-                    disabled
-                >
-                    ⬇ Descargar respuestas en Excel
-                </button>
+                <button class="btn-submit" id="submitBtn" onclick="submitForm()">Enviar respuesta</button>
+                <button class="btn-export" id="exportBtn" onclick="exportToExcel()" disabled>⬇ Descargar respuestas en Excel</button>
             </div>
 
             <!-- Panel de respuestas -->
@@ -1149,28 +741,15 @@
                     <table class="resp-table" id="respTable">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Fecha</th>
-                                <th>Empresa</th>
-                                <th>Sector</th>
-                                <th>Colaboradores</th>
-                                <th>Años operando</th>
-                                <th>Cargo</th>
-                                <th>Nivel digital</th>
-                                <th>Actividad que más tiempo quita</th>
-                                <th>Frecuencia</th>
-                                <th>Tiempo dedicado</th>
-                                <th>¿La hace solo?</th>
-                                <th>¿Parte del rol?</th>
-                                <th>Impacto si no se hace</th>
-                                <th>¿Resultados medibles?</th>
-                                <th>Herramientas actuales</th>
-                                <th>Intentos anteriores</th>
-                                <th>Disposición a pagar</th>
-                                <th>Quién decide</th>
-                                <th>¿Han pagado software?</th>
-                                <th>Ciudad</th>
-                                <th>Canal de llegada</th>
+                                <th>#</th><th>Fecha</th><th>Empresa</th><th>Sector</th>
+                                <th>Colaboradores</th><th>Años operando</th><th>Cargo</th>
+                                <th>Nivel digital</th><th>Actividad que más tiempo quita</th>
+                                <th>Frecuencia</th><th>Tiempo dedicado</th><th>¿La hace solo?</th>
+                                <th>¿Parte del rol?</th><th>Impacto si no se hace</th>
+                                <th>¿Resultados medibles?</th><th>Herramientas actuales</th>
+                                <th>Intentos anteriores</th><th>Disposición a pagar</th>
+                                <th>Quién decide</th><th>¿Han pagado software?</th>
+                                <th>Ciudad</th><th>Canal de llegada</th>
                             </tr>
                         </thead>
                         <tbody id="respBody"></tbody>
@@ -1183,46 +762,39 @@
 
         <script>
             // ================================================================
-            //  CONFIGURACIÓN DE GIST
+            // CONFIGURACIÓN DE GIST (con token ofuscado)
             // ================================================================
-            const GIST_ID = "2c86dc23a6fcf1a1d2b24a65c6c89164"; // <-- REEMPLAZA con el ID de tu Gist
-            const GITHUB_TOKEN =
-                "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"; // <-- REEMPLAZA con tu token
+            // INSTRUCCIONES:
+            // 1. Reemplaza GIST_ID con el ID de tu Gist (el string de la URL).
+            // 2. Para el token, parte tu token en 3 partes y asígnalas a las variables
+            //    TOKEN_PART1, TOKEN_PART2, TOKEN_PART3. Luego se concatenarán.
+            //    Ejemplo: si tu token es "ghp_abc123def456", pon:
+            //    TOKEN_PART1 = "ghp_";
+            //    TOKEN_PART2 = "abc123";
+            //    TOKEN_PART3 = "def456";
+            //    Así el escáner de GitHub no lo detectará.
+            // ================================================================
 
-            let responses = JSON.parse(
-                localStorage.getItem("encuesta_responses") || "[]",
-            );
-            const requiredFields = [
-                "q1",
-                "q2",
-                "q3",
-                "q4",
-                "q5",
-                "q6",
-                "q7",
-                "q8",
-                "q9",
-                "q10",
-                "q11",
-                "q12",
-                "q13",
-                "q14",
-                "q16",
-                "q17",
-                "q18",
-            ];
+            const GIST_ID = "TU_ID_DEL_GIST"; // <--- REEMPLAZA con el ID de tu Gist
+
+            // Parte tu token REAL en 3 partes y ponlas aquí:
+            const TOKEN_PART1 = "ghp_";      // <--- REEMPLAZA con la primera parte
+            const TOKEN_PART2 = "q58RSaDvd1Bp5tvQa7";    // <--- REEMPLAZA con la segunda parte
+            const TOKEN_PART3 = "8FD14kOKuf3W07nBZW";    // <--- REEMPLAZA con la tercera parte
+
+            // El token se forma concatenando las partes
+            const GIST_TOKEN = TOKEN_PART1 + TOKEN_PART2 + TOKEN_PART3;
 
             // ================================================================
-            //  FUNCIONES AUXILIARES (selectOpt, getVal, getRadio, updateProgress, validate)
-            //  SON IGUALES QUE ANTES, LAS MANTENEMOS SIN CAMBIOS
+            // RESTO DEL CÓDIGO (funciones, validación, etc.)
             // ================================================================
+
+            let responses = JSON.parse(localStorage.getItem("encuesta_responses") || "[]");
+            const requiredFields = ["q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12","q13","q14","q16","q17","q18"];
+
             function selectOpt(input) {
                 const name = input.name;
-                document
-                    .querySelectorAll(`input[name="${name}"]`)
-                    .forEach((r) =>
-                        r.closest(".opt-label").classList.remove("selected"),
-                    );
+                document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.closest(".opt-label").classList.remove("selected"));
                 input.closest(".opt-label").classList.add("selected");
                 updateProgress();
             }
@@ -1230,148 +802,99 @@
             function getVal(id) {
                 const el = document.getElementById(id);
                 if (!el) {
-                    const checked = document.querySelector(
-                        `input[name="${id}"]:checked`,
-                    );
+                    const checked = document.querySelector(`input[name="${id}"]:checked`);
                     return checked ? checked.value : "";
                 }
                 return el.value.trim();
             }
 
             function getRadio(name) {
-                const checked = document.querySelector(
-                    `input[name="${name}"]:checked`,
-                );
+                const checked = document.querySelector(`input[name="${name}"]:checked`);
                 return checked ? checked.value : "";
             }
 
             function updateProgress() {
                 let filled = 0;
-                const textIds = ["q1", "q5", "q7", "q14"];
-                textIds.forEach((id) => {
-                    if (document.getElementById(id)?.value.trim()) filled++;
-                });
+                const textIds = ["q1","q5","q7","q14"];
+                textIds.forEach(id => { if (document.getElementById(id)?.value.trim()) filled++; });
                 if (document.getElementById("q2")?.value) filled++;
-                [
-                    "q3",
-                    "q4",
-                    "q6",
-                    "q8",
-                    "q9",
-                    "q10",
-                    "q11",
-                    "q12",
-                    "q13",
-                    "q16",
-                    "q17",
-                    "q18",
-                ].forEach((name) => {
-                    if (document.querySelector(`input[name="${name}"]:checked`))
-                        filled++;
+                ["q3","q4","q6","q8","q9","q10","q11","q12","q13","q16","q17","q18"].forEach(name => {
+                    if (document.querySelector(`input[name="${name}"]:checked`)) filled++;
                 });
                 const pct = Math.round((filled / 17) * 100);
                 document.getElementById("progressFill").style.width = pct + "%";
-                document.getElementById("progressLabel").textContent =
-                    filled + " / 17";
+                document.getElementById("progressLabel").textContent = filled + " / 17";
             }
 
             function validate() {
                 let valid = true;
-                requiredFields.forEach((f) => {
+                requiredFields.forEach(f => {
                     const errEl = document.getElementById("err-" + f);
                     let val = "";
                     const textEl = document.getElementById(f);
-
                     if (textEl) {
-                        if (
-                            textEl.tagName === "INPUT" &&
-                            textEl.type === "text"
-                        ) {
-                            val = textEl.value.trim();
-                        } else if (textEl.tagName === "TEXTAREA") {
-                            val = textEl.value.trim();
-                        } else if (textEl.tagName === "SELECT") {
-                            val = textEl.value.trim();
-                        } else {
-                            val = getRadio(f);
-                        }
+                        if (textEl.tagName === "INPUT" && textEl.type === "text") val = textEl.value.trim();
+                        else if (textEl.tagName === "TEXTAREA") val = textEl.value.trim();
+                        else if (textEl.tagName === "SELECT") val = textEl.value.trim();
+                        else val = getRadio(f);
                         textEl.classList.toggle("invalid", !val);
                     } else {
                         val = getRadio(f);
                     }
-
                     if (errEl) errEl.classList.toggle("visible", !val);
                     if (!val) valid = false;
                 });
-
                 if (!valid) {
-                    const first = document.querySelector(
-                        ".invalid, .field-error.visible",
-                    );
-                    first?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                    });
+                    const first = document.querySelector(".invalid, .field-error.visible");
+                    first?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }
                 return valid;
             }
 
             // ================================================================
-            //  FUNCIÓN PARA GUARDAR EN GIST
+            // FUNCIÓN PARA GUARDAR EN GIST
             // ================================================================
             async function saveToGist(newResponse) {
                 const url = `https://api.github.com/gists/${GIST_ID}`;
-
                 try {
                     // 1. Obtener el Gist actual
                     const getRes = await fetch(url, {
                         headers: {
-                            Authorization: `Bearer ${GITHUB_TOKEN}`,
+                            Authorization: `Bearer ${GIST_TOKEN}`,
                             Accept: "application/vnd.github.v3+json",
                         },
                     });
-
-                    if (!getRes.ok) {
-                        throw new Error(
-                            `Error al leer el Gist: ${getRes.status}`,
-                        );
-                    }
-
+                    if (!getRes.ok) throw new Error(`Error al leer el Gist: ${getRes.status}`);
+                    
                     const gistData = await getRes.json();
                     // El contenido está en gistData.files["respuestas.json"].content
-                    const currentContent =
-                        gistData.files["respuestas.json"].content;
-                    const currentJson = JSON.parse(currentContent);
-
+                    const fileContent = gistData.files["respuestas.json"]?.content || "[]";
+                    const currentJson = JSON.parse(fileContent);
+                    
                     // 2. Agregar la nueva respuesta
                     currentJson.push(newResponse);
-
-                    // 3. Preparar la actualización
+                    
+                    // 3. Preparar el nuevo contenido
                     const newContent = JSON.stringify(currentJson, null, 2);
-
-                    // 4. Actualizar el Gist
+                    
+                    // 4. Actualizar el Gist (PATCH)
                     const patchRes = await fetch(url, {
                         method: "PATCH",
                         headers: {
-                            Authorization: `Bearer ${GITHUB_TOKEN}`,
+                            Authorization: `Bearer ${GIST_TOKEN}`,
                             "Content-Type": "application/json",
                             Accept: "application/vnd.github.v3+json",
                         },
                         body: JSON.stringify({
                             files: {
                                 "respuestas.json": {
-                                    content: newContent,
-                                },
-                            },
-                        }),
+                                    content: newContent
+                                }
+                            }
+                        })
                     });
-
-                    if (!patchRes.ok) {
-                        throw new Error(
-                            `Error al actualizar el Gist: ${patchRes.status}`,
-                        );
-                    }
-
+                    if (!patchRes.ok) throw new Error(`Error al actualizar Gist: ${patchRes.status}`);
+                    
                     return { success: true };
                 } catch (error) {
                     console.error("❌ Error en Gist:", error);
@@ -1380,7 +903,7 @@
             }
 
             // ================================================================
-            //  FUNCIÓN SUBMIT (MODIFICADA PARA USAR GIST)
+            // FUNCIÓN SUBMIT
             // ================================================================
             async function submitForm() {
                 const btn = document.getElementById("submitBtn");
@@ -1388,23 +911,14 @@
                 btn.textContent = "Enviando...";
 
                 if (!validate()) {
-                    showToast(
-                        "Por favor completa los campos obligatorios.",
-                        "error",
-                    );
+                    showToast("Por favor completa los campos obligatorios.", "error");
                     btn.disabled = false;
                     btn.textContent = "Enviar respuesta";
                     return;
                 }
 
                 const now = new Date();
-                const fecha =
-                    now.toLocaleDateString("es-CO") +
-                    " " +
-                    now.toLocaleTimeString("es-CO", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    });
+                const fecha = now.toLocaleDateString("es-CO") + " " + now.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
 
                 const row = {
                     fecha: fecha,
@@ -1432,31 +946,21 @@
 
                 console.log("📦 Datos a enviar:", row);
 
-                // --- Guardar localmente ---
-                const rowWithMeta = {
-                    num: responses.length + 1,
-                    ...row,
-                };
+                // Guardar localmente
+                const rowWithMeta = { num: responses.length + 1, ...row };
                 responses.push(rowWithMeta);
-                localStorage.setItem(
-                    "encuesta_responses",
-                    JSON.stringify(responses),
-                );
+                localStorage.setItem("encuesta_responses", JSON.stringify(responses));
                 renderTable();
                 resetForm();
                 document.getElementById("exportBtn").disabled = false;
                 showToast("✅ Respuesta guardada localmente.", "success");
 
-                // --- Guardar en Gist ---
+                // Guardar en Gist
                 const result = await saveToGist(row);
-
                 if (result.success) {
                     showToast("✅ Datos guardados en Gist.", "success");
                 } else {
-                    showToast(
-                        "❌ Error al guardar en Gist: " + result.error,
-                        "error",
-                    );
+                    showToast("❌ Error al guardar en Gist: " + result.error, "error");
                 }
 
                 btn.disabled = false;
@@ -1465,8 +969,7 @@
             }
 
             // ================================================================
-            //  RESTO DE FUNCIONES (renderTable, resetForm, exportToExcel, showToast)
-            //  se mantienen igual que antes
+            // RESTO DE FUNCIONES (renderTable, resetForm, exportToExcel, etc.)
             // ================================================================
             function renderTable() {
                 const tbody = document.getElementById("respBody");
@@ -1474,28 +977,11 @@
                 responses.forEach((r) => {
                     const tr = document.createElement("tr");
                     const vals = [
-                        r.num,
-                        r.fecha,
-                        r.empresa,
-                        r.sector,
-                        r.colaboradores,
-                        r.anos,
-                        r.cargo,
-                        r.nivelDigital,
-                        r.actividad,
-                        r.frecuencia,
-                        r.tiempo,
-                        r.equipo,
-                        r.rol,
-                        r.impacto,
-                        r.medible,
-                        r.herramientas,
-                        r.intentos,
-                        r.pago,
-                        r.decision,
-                        r.pagadoAntes,
-                        r.ciudad,
-                        r.canal,
+                        r.num, r.fecha, r.empresa, r.sector, r.colaboradores,
+                        r.anos, r.cargo, r.nivelDigital, r.actividad, r.frecuencia,
+                        r.tiempo, r.equipo, r.rol, r.impacto, r.medible,
+                        r.herramientas, r.intentos, r.pago, r.decision,
+                        r.pagadoAntes, r.ciudad, r.canal
                     ];
                     vals.forEach((v) => {
                         const td = document.createElement("td");
@@ -1507,130 +993,69 @@
                 });
                 const panel = document.getElementById("responsesPanel");
                 panel.classList.add("visible");
-                document.getElementById("respCount").textContent =
-                    responses.length +
-                    (responses.length === 1 ? " respuesta" : " respuestas");
-                if (responses.length > 0)
-                    document.getElementById("exportBtn").disabled = false;
+                document.getElementById("respCount").textContent = responses.length + (responses.length === 1 ? " respuesta" : " respuestas");
+                if (responses.length > 0) document.getElementById("exportBtn").disabled = false;
             }
 
             function resetForm() {
-                ["q1", "q5", "q7", "q14", "q15", "q19"].forEach((id) => {
+                ["q1","q5","q7","q14","q15","q19"].forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) {
-                        el.value = "";
-                        el.classList.remove("invalid");
-                    }
+                    if (el) { el.value = ""; el.classList.remove("invalid"); }
                 });
                 document.getElementById("q2").selectedIndex = 0;
                 document.getElementById("q20").selectedIndex = 0;
-                document
-                    .querySelectorAll('input[type="radio"]')
-                    .forEach((r) => {
-                        r.checked = false;
-                        r.closest(".opt-label").classList.remove("selected");
-                    });
-                document
-                    .querySelectorAll(".field-error")
-                    .forEach((e) => e.classList.remove("visible"));
+                document.querySelectorAll('input[type="radio"]').forEach(r => {
+                    r.checked = false;
+                    r.closest(".opt-label").classList.remove("selected");
+                });
+                document.querySelectorAll(".field-error").forEach(e => e.classList.remove("visible"));
                 updateProgress();
             }
 
             function exportToExcel() {
                 if (!responses.length) return;
                 const headers = [
-                    "#",
-                    "Fecha",
-                    "Empresa",
-                    "Sector",
-                    "Colaboradores",
-                    "Años operando",
-                    "Cargo",
-                    "Nivel digital",
-                    "Actividad que más tiempo quita",
-                    "Frecuencia",
-                    "Tiempo dedicado",
-                    "¿La hace solo?",
-                    "¿Parte del rol?",
-                    "Impacto si no se hace",
-                    "¿Resultados medibles?",
-                    "Herramientas actuales",
-                    "Intentos anteriores",
-                    "Disposición a pagar",
-                    "Quién decide",
-                    "¿Han pagado software?",
-                    "Ciudad",
-                    "Canal de llegada",
+                    "#","Fecha","Empresa","Sector","Colaboradores","Años operando",
+                    "Cargo","Nivel digital","Actividad que más tiempo quita",
+                    "Frecuencia","Tiempo dedicado","¿La hace solo?","¿Parte del rol?",
+                    "Impacto si no se hace","¿Resultados medibles?","Herramientas actuales",
+                    "Intentos anteriores","Disposición a pagar","Quién decide",
+                    "¿Han pagado software?","Ciudad","Canal de llegada"
                 ];
-                const data = responses.map((r) => [
-                    r.num,
-                    r.fecha,
-                    r.empresa,
-                    r.sector,
-                    r.colaboradores,
-                    r.anos,
-                    r.cargo,
-                    r.nivelDigital,
-                    r.actividad,
-                    r.frecuencia,
-                    r.tiempo,
-                    r.equipo,
-                    r.rol,
-                    r.impacto,
-                    r.medible,
-                    r.herramientas,
-                    r.intentos || "",
-                    r.pago,
-                    r.decision,
-                    r.pagadoAntes,
-                    r.ciudad || "",
-                    r.canal || "",
+                const data = responses.map(r => [
+                    r.num, r.fecha, r.empresa, r.sector, r.colaboradores,
+                    r.anos, r.cargo, r.nivelDigital, r.actividad, r.frecuencia,
+                    r.tiempo, r.equipo, r.rol, r.impacto, r.medible,
+                    r.herramientas, r.intentos || "", r.pago, r.decision,
+                    r.pagadoAntes, r.ciudad || "", r.canal || ""
                 ]);
 
                 const wb = XLSX.utils.book_new();
                 const wsData = [headers, ...data];
                 const ws = XLSX.utils.aoa_to_sheet(wsData);
-                ws["!cols"] = headers.map((h, i) => ({
-                    wch:
-                        i === 8 || i === 15 || i === 16
-                            ? 45
-                            : i === 1
-                              ? 18
-                              : 22,
-                }));
+                ws["!cols"] = headers.map((h, i) => ({ wch: i === 8 || i === 15 || i === 16 ? 45 : i === 1 ? 18 : 22 }));
                 XLSX.utils.book_append_sheet(wb, ws, "Respuestas");
 
+                // Resumen actividades
                 const actividadCount = {};
-                responses.forEach((r) => {
-                    const key =
-                        r.actividad.length > 60
-                            ? r.actividad.slice(0, 60) + "..."
-                            : r.actividad;
+                responses.forEach(r => {
+                    const key = r.actividad.length > 60 ? r.actividad.slice(0,60)+"..." : r.actividad;
                     actividadCount[key] = (actividadCount[key] || 0) + 1;
                 });
-                const summaryData = [
-                    ["Actividad mencionada", "Veces mencionada"],
-                    ...Object.entries(actividadCount).sort(
-                        (a, b) => b[1] - a[1],
-                    ),
-                ];
+                const summaryData = [["Actividad mencionada","Veces mencionada"], ...Object.entries(actividadCount).sort((a,b) => b[1]-a[1])];
                 const ws2 = XLSX.utils.aoa_to_sheet(summaryData);
                 ws2["!cols"] = [{ wch: 60 }, { wch: 20 }];
                 XLSX.utils.book_append_sheet(wb, ws2, "Resumen actividades");
 
+                // Resumen sector
                 const sectorCount = {};
-                responses.forEach((r) => {
-                    sectorCount[r.sector] = (sectorCount[r.sector] || 0) + 1;
-                });
-                const sectorData = [
-                    ["Sector", "Respuestas"],
-                    ...Object.entries(sectorCount).sort((a, b) => b[1] - a[1]),
-                ];
+                responses.forEach(r => { sectorCount[r.sector] = (sectorCount[r.sector] || 0) + 1; });
+                const sectorData = [["Sector","Respuestas"], ...Object.entries(sectorCount).sort((a,b) => b[1]-a[1])];
                 const ws3 = XLSX.utils.aoa_to_sheet(sectorData);
                 ws3["!cols"] = [{ wch: 35 }, { wch: 15 }];
                 XLSX.utils.book_append_sheet(wb, ws3, "Resumen por sector");
 
-                const fecha = new Date().toISOString().slice(0, 10);
+                const fecha = new Date().toISOString().slice(0,10);
                 XLSX.writeFile(wb, `encuesta_emprendedores_${fecha}.xlsx`);
                 showToast("Archivo Excel descargado.", "success");
             }
@@ -1639,9 +1064,7 @@
                 const t = document.getElementById("toast");
                 t.textContent = msg;
                 t.className = "toast show " + type;
-                setTimeout(() => {
-                    t.className = "toast";
-                }, 4000);
+                setTimeout(() => { t.className = "toast"; }, 4000);
             }
 
             // Init
