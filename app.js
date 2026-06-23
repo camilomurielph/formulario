@@ -47,7 +47,7 @@ const downloadExcelBtn = document.getElementById('download-excel-btn');
 const manageResponsesBtn = document.getElementById('manage-responses-btn');
 
 // ================================================================
-// FUNCIONES DEL FORMULARIO (sin cambios significativos)
+// FUNCIONES DEL FORMULARIO
 // ================================================================
 function renderQuestion(index) {
     const q = questions[index];
@@ -277,7 +277,7 @@ async function updateGistContent(data) {
 }
 
 // ================================================================
-// ENVÍO DEL FORMULARIO (ahora sincroniza con Gist y localStorage)
+// ENVÍO DEL FORMULARIO
 // ================================================================
 async function submitForm() {
     // Validar todas las preguntas obligatorias
@@ -329,7 +329,7 @@ async function submitForm() {
     localResponses.push(rowWithMeta);
     localStorage.setItem('encuesta_responses', JSON.stringify(localResponses));
 
-    // Guardar en Gist (lee, agrega, escribe)
+    // Guardar en Gist
     submitBtn.disabled = true;
     submitBtn.textContent = 'Enviando...';
 
@@ -342,7 +342,7 @@ async function submitForm() {
         currentIndex = 0;
         renderQuestion(0);
         updateProgress();
-        // Actualizar localStorage también con los datos del Gist
+        // Actualizar localStorage con los datos del Gist
         localResponses = currentData.map((r, idx) => ({ num: idx + 1, ...r }));
         localStorage.setItem('encuesta_responses', JSON.stringify(localResponses));
     } catch (error) {
@@ -399,9 +399,7 @@ function renderAdminView(view) {
     currentAdminView = view;
     adminContent.innerHTML = '<p style="color: var(--text-secondary);">Cargando respuestas...</p>';
 
-    // Cargar datos actualizados desde Gist
     fetchGistContent().then(data => {
-        // Actualizar localResponses para mantener consistencia
         localResponses = data.map((r, idx) => ({ num: idx + 1, ...r }));
         localStorage.setItem('encuesta_responses', JSON.stringify(localResponses));
 
@@ -410,7 +408,6 @@ function renderAdminView(view) {
         } else if (view === 'blocks') {
             renderBlocks(data);
         } else {
-            // Vista por defecto: mostrar resumen
             renderSummary(data);
         }
     }).catch(error => {
@@ -482,7 +479,6 @@ function renderTable(data) {
     html += `</tbody></table></div>`;
     adminContent.innerHTML = html;
 
-    // Eventos para eliminar
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             const index = parseInt(e.target.dataset.index);
@@ -494,7 +490,7 @@ function renderTable(data) {
 }
 
 // ================================================================
-// ADMIN: BLOQUES DE RESPUESTAS (con selección múltiple y filtros)
+// ADMIN: BLOQUES DE RESPUESTAS
 // ================================================================
 let selectedBlocks = new Set();
 
@@ -504,7 +500,6 @@ function renderBlocks(data) {
         return;
     }
 
-    // Filtros
     const sectors = [...new Set(data.map(r => r.sector).filter(Boolean))];
     const colaboradores = [...new Set(data.map(r => r.colaboradores).filter(Boolean))];
 
@@ -542,7 +537,6 @@ function renderBlocks(data) {
 
     adminContent.innerHTML = html;
 
-    // Renderizar bloques (con filtros aplicados)
     function renderFilteredBlocks() {
         const sectorFilter = document.getElementById('filter-sector').value;
         const colabFilter = document.getElementById('filter-colab').value;
@@ -591,23 +585,19 @@ function renderBlocks(data) {
             `;
         }).join('');
 
-        // Actualizar contador de seleccionados
         document.getElementById('selected-count').textContent = selectedBlocks.size;
 
-        // Eventos de checkboxes
         document.querySelectorAll('.block-checkbox').forEach(cb => {
             cb.addEventListener('change', (e) => {
                 const idx = parseInt(e.target.dataset.index);
                 if (e.target.checked) selectedBlocks.add(idx);
                 else selectedBlocks.delete(idx);
-                // Actualizar clase selected del bloque
                 const block = e.target.closest('.response-block');
                 block.classList.toggle('selected', e.target.checked);
                 document.getElementById('selected-count').textContent = selectedBlocks.size;
             });
         });
 
-        // Eventos de ver
         document.querySelectorAll('.view-block-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const idx = parseInt(btn.dataset.index);
@@ -615,7 +605,6 @@ function renderBlocks(data) {
             });
         });
 
-        // Eventos de eliminar individual
         document.querySelectorAll('.delete-block-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const idx = parseInt(btn.dataset.index);
@@ -626,7 +615,6 @@ function renderBlocks(data) {
         });
     }
 
-    // Eventos de filtros
     document.getElementById('filter-sector').addEventListener('change', renderFilteredBlocks);
     document.getElementById('filter-colab').addEventListener('change', renderFilteredBlocks);
     document.getElementById('filter-date-from').addEventListener('change', renderFilteredBlocks);
@@ -639,7 +627,6 @@ function renderBlocks(data) {
         renderFilteredBlocks();
     });
 
-    // Acciones masivas
     document.getElementById('select-all-btn').addEventListener('click', () => {
         const container = document.getElementById('blocks-container');
         container.querySelectorAll('.block-checkbox').forEach(cb => {
@@ -673,7 +660,6 @@ function renderBlocks(data) {
             selectedBlocks.clear();
             document.getElementById('selected-count').textContent = 0;
             showToast(`✅ ${indices.length} respuestas eliminadas.`, 'success');
-            // Recargar vista
             renderAdminView('blocks');
         }
     });
@@ -689,12 +675,11 @@ function renderBlocks(data) {
         showToast(`📥 Excel de ${selectedData.length} respuestas descargado.`, 'success');
     });
 
-    // Render inicial
     renderFilteredBlocks();
 }
 
 // ================================================================
-// ADMIN: FUNCIONES DE ELIMINACIÓN Y MODAL
+// ADMIN: ELIMINAR Y MODAL
 // ================================================================
 async function deleteResponse(index) {
     try {
@@ -705,11 +690,9 @@ async function deleteResponse(index) {
         }
         data.splice(index, 1);
         await updateGistContent(data);
-        // Actualizar localStorage
         localResponses = data.map((r, idx) => ({ num: idx + 1, ...r }));
         localStorage.setItem('encuesta_responses', JSON.stringify(localResponses));
         showToast('🗑️ Respuesta eliminada.', 'success');
-        // Re-renderizar vista actual
         renderAdminView(currentAdminView);
     } catch (error) {
         showToast('❌ Error al eliminar: ' + error.message, 'error');
@@ -755,7 +738,6 @@ function showResponseModal(response) {
     modal.classList.add('show');
 }
 
-// Cerrar modal
 modalClose.addEventListener('click', () => modal.classList.remove('show'));
 window.addEventListener('click', (e) => {
     if (e.target === modal) modal.classList.remove('show');
@@ -777,29 +759,154 @@ downloadExcelBtn.addEventListener('click', () => {
 });
 
 // ================================================================
-// DESCARGA DE EXCEL (reutilizable)
+// DESCARGA DE EXCEL CON FORMATO (usando exceljs)
 // ================================================================
-function downloadExcel(data) {
-    if (!data || data.length === 0) return;
+async function downloadExcel(data) {
+    if (!data || data.length === 0) {
+        showToast('No hay datos para exportar.', 'error');
+        return;
+    }
 
-    const headers = ['#', 'Fecha', 'Empresa', 'Sector', 'Colaboradores', 'Años operando', 'Cargo', 'Nivel digital', 'Actividad que más tiempo quita', 'Frecuencia', 'Tiempo dedicado', '¿La hace solo?', '¿Parte del rol?', 'Impacto si no se hace', '¿Resultados medibles?', 'Herramientas actuales', 'Intentos anteriores', 'Disposición a pagar', 'Quién decide', '¿Han pagado software?', 'Ciudad', 'Canal de llegada'];
-    const keys = ['num', 'fecha', 'empresa', 'sector', 'colaboradores', 'anos', 'cargo', 'nivelDigital', 'actividad', 'frecuencia', 'tiempo', 'equipo', 'rol', 'impacto', 'medible', 'herramientas', 'intentos', 'pago', 'decision', 'pagadoAntes', 'ciudad', 'canal'];
-
-    const rows = data.map((r, idx) => {
-        return keys.map(k => {
-            if (k === 'num') return idx + 1;
-            return r[k] || '';
-        });
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Encuesta';
+    workbook.created = new Date();
+    const worksheet = workbook.addWorksheet('Respuestas', {
+        views: [{ state: 'frozen', ySplit: 1 }]
     });
 
-    const wb = XLSX.utils.book_new();
-    const wsData = [headers, ...rows];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    ws['!cols'] = headers.map((h, i) => ({ wch: i === 8 || i === 15 || i === 16 ? 45 : i === 1 ? 18 : 22 }));
-    XLSX.utils.book_append_sheet(wb, ws, 'Respuestas');
+    // Definir columnas y anchos
+    const columns = [
+        { header: '#', key: 'num', width: 6 },
+        { header: 'Fecha', key: 'fecha', width: 18 },
+        { header: 'Empresa', key: 'empresa', width: 22 },
+        { header: 'Sector', key: 'sector', width: 22 },
+        { header: 'Colaboradores', key: 'colaboradores', width: 16 },
+        { header: 'Años operando', key: 'anos', width: 16 },
+        { header: 'Cargo', key: 'cargo', width: 22 },
+        { header: 'Nivel digital', key: 'nivelDigital', width: 16 },
+        { header: 'Actividad que más tiempo quita', key: 'actividad', width: 45 },
+        { header: 'Frecuencia', key: 'frecuencia', width: 20 },
+        { header: 'Tiempo dedicado', key: 'tiempo', width: 18 },
+        { header: '¿La hace solo?', key: 'equipo', width: 20 },
+        { header: '¿Parte del rol?', key: 'rol', width: 22 },
+        { header: 'Impacto si no se hace', key: 'impacto', width: 25 },
+        { header: '¿Resultados medibles?', key: 'medible', width: 20 },
+        { header: 'Herramientas actuales', key: 'herramientas', width: 45 },
+        { header: 'Intentos anteriores', key: 'intentos', width: 35 },
+        { header: 'Disposición a pagar', key: 'pago', width: 28 },
+        { header: 'Quién decide', key: 'decision', width: 18 },
+        { header: '¿Han pagado software?', key: 'pagadoAntes', width: 22 },
+        { header: 'Ciudad', key: 'ciudad', width: 20 },
+        { header: 'Canal de llegada', key: 'canal', width: 22 }
+    ];
 
-    const fecha = new Date().toISOString().slice(0, 10);
-    XLSX.writeFile(wb, `encuesta_respuestas_${fecha}.xlsx`);
+    worksheet.columns = columns;
+
+    // Estilo cabecera
+    const headerStyle = {
+        font: { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF534ab7' } },
+        alignment: { horizontal: 'center', vertical: 'middle' },
+        border: {
+            top: { style: 'thin', color: { argb: 'FF999999' } },
+            bottom: { style: 'medium', color: { argb: 'FF999999' } },
+            left: { style: 'thin', color: { argb: 'FF999999' } },
+            right: { style: 'thin', color: { argb: 'FF999999' } }
+        }
+    };
+
+    const headerRow = worksheet.getRow(1);
+    headerRow.height = 28;
+    headerRow.eachCell((cell) => {
+        cell.style = headerStyle;
+    });
+
+    // Estilo datos
+    const dataStyle = {
+        alignment: { horizontal: 'left', vertical: 'middle', wrapText: true },
+        border: {
+            top: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            bottom: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            left: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            right: { style: 'thin', color: { argb: 'FFDDDDDD' } }
+        }
+    };
+
+    const alternateStyle = {
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF5F5F5' } }
+    };
+
+    // Llenar datos
+    data.forEach((r, idx) => {
+        const rowNumber = idx + 2;
+        const row = worksheet.getRow(rowNumber);
+        row.height = 22;
+
+        const rowData = [
+            idx + 1,
+            r.fecha || '',
+            r.empresa || '',
+            r.sector || '',
+            r.colaboradores || '',
+            r.anos || '',
+            r.cargo || '',
+            r.nivelDigital || '',
+            r.actividad || '',
+            r.frecuencia || '',
+            r.tiempo || '',
+            r.equipo || '',
+            r.rol || '',
+            r.impacto || '',
+            r.medible || '',
+            r.herramientas || '',
+            r.intentos || '',
+            r.pago || '',
+            r.decision || '',
+            r.pagadoAntes || '',
+            r.ciudad || '',
+            r.canal || ''
+        ];
+
+        row.values = rowData;
+
+        row.eachCell((cell) => {
+            cell.style = { ...dataStyle };
+            if (cell.col === 1 || cell.col === 2 || cell.col === 5 || cell.col === 6) {
+                cell.style.alignment = { horizontal: 'center', vertical: 'middle' };
+            }
+        });
+
+        if (idx % 2 === 1) {
+            row.eachCell((cell) => {
+                cell.style.fill = { ...alternateStyle.fill };
+            });
+        }
+    });
+
+    // Ajustar altura de filas con texto largo
+    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+        if (rowNumber > 1) {
+            let maxHeight = 22;
+            row.eachCell((cell) => {
+                if (cell.value && cell.value.toString().length > 50) {
+                    maxHeight = Math.max(maxHeight, 35);
+                }
+            });
+            row.height = maxHeight;
+        }
+    });
+
+    // Generar y descargar
+    try {
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const fecha = new Date().toISOString().slice(0, 10);
+        saveAs(blob, `encuesta_respuestas_${fecha}.xlsx`);
+        showToast('📥 Excel descargado con formato.', 'success');
+    } catch (error) {
+        console.error('Error al generar Excel:', error);
+        showToast('❌ Error al generar el Excel.', 'error');
+    }
 }
 
 // ================================================================
@@ -817,12 +924,9 @@ function showToast(msg, type = '') {
 // ================================================================
 // INICIALIZAR
 // ================================================================
-// Cargar respuestas locales desde localStorage
 if (localResponses.length > 0) {
-    // Si hay datos locales, sincronizar con Gist en segundo plano (para mantener consistencia)
     fetchGistContent().then(gistData => {
         if (gistData.length > localResponses.length) {
-            // El Gist tiene más datos, actualizar localStorage
             localResponses = gistData.map((r, idx) => ({ num: idx + 1, ...r }));
             localStorage.setItem('encuesta_responses', JSON.stringify(localResponses));
         }
