@@ -31,13 +31,12 @@ const stepIndicator = document.getElementById('step-indicator');
 const toast = document.getElementById('toast');
 
 // ================================================================
-// RENDERIZAR PREGUNTA ACTUAL (CORREGIDO)
+// RENDERIZAR PREGUNTA ACTUAL
 // ================================================================
 function renderQuestion(index) {
     const q = questions[index];
     if (!q) return;
 
-    // Construir HTML
     let html = `
         <div class="q-number">${q.section ? q.section + ' • ' : ''}Pregunta ${index + 1} de ${totalQuestions}</div>
         <div class="q-text">${q.text}${q.required ? ' <span style="color: var(--accent);">*</span>' : ''}</div>
@@ -106,7 +105,6 @@ function renderQuestion(index) {
         radios.forEach(radio => {
             radio.addEventListener('change', (e) => {
                 answers[q.id] = e.target.value;
-                // Actualizar estilo de los labels
                 document.querySelectorAll(`#${q.id} .opt-label`).forEach(label => {
                     const input = label.querySelector('input');
                     if (input) {
@@ -114,11 +112,9 @@ function renderQuestion(index) {
                     }
                 });
                 updateProgress();
-                // Eliminar clase de error visual si existe
                 document.getElementById(`err-${q.id}`)?.classList.remove('visible');
             });
         });
-        // Si ya hay un valor seleccionado, asegurar que el label esté marcado
         if (value) {
             document.querySelectorAll(`#${q.id} .opt-label`).forEach(label => {
                 const input = label.querySelector('input');
@@ -129,10 +125,8 @@ function renderQuestion(index) {
         }
     }
 
-    // Actualizar botones y progreso
     updateButtons();
     updateProgress();
-    // Mostrar/ocultar botón de envío
     submitSection.style.display = (index === totalQuestions - 1) ? 'block' : 'none';
 }
 
@@ -140,7 +134,6 @@ function renderQuestion(index) {
 // NAVEGACIÓN
 // ================================================================
 function goTo(index) {
-    // Validar la pregunta actual antes de avanzar
     if (index > currentIndex) {
         if (!validateCurrent()) {
             return;
@@ -172,7 +165,7 @@ function updateButtons() {
 }
 
 // ================================================================
-// VALIDACIÓN DE LA PREGUNTA ACTUAL (CORREGIDO)
+// VALIDACIÓN DE LA PREGUNTA ACTUAL
 // ================================================================
 function validateCurrent() {
     const q = questions[currentIndex];
@@ -181,7 +174,6 @@ function validateCurrent() {
     const errEl = document.getElementById(`err-${q.id}`);
     let val = '';
 
-    // Obtener valor según tipo
     if (q.type === 'text' || q.type === 'textarea') {
         const input = document.getElementById(q.id);
         if (input) {
@@ -198,12 +190,10 @@ function validateCurrent() {
         const checked = document.querySelector(`input[name="${q.id}"]:checked`);
         if (checked) {
             val = checked.value;
-            // Sincronizar answers
             answers[q.id] = val;
         } else {
             val = '';
         }
-        // Marcar visualmente los labels (solo para feedback)
         document.querySelectorAll(`#${q.id} .opt-label`).forEach(label => {
             const radio = label.querySelector('input');
             if (radio) {
@@ -212,10 +202,8 @@ function validateCurrent() {
         });
     }
 
-    // Mostrar/ocultar error y marcar inválido
     if (!val) {
         if (errEl) errEl.classList.add('visible');
-        // Marcar el campo como inválido visualmente
         if (q.type === 'text' || q.type === 'textarea' || q.type === 'select') {
             const el = document.getElementById(q.id);
             if (el) el.classList.add('invalid');
@@ -227,7 +215,6 @@ function validateCurrent() {
             const el = document.getElementById(q.id);
             if (el) el.classList.remove('invalid');
         }
-        // Actualizar answers para consistencia (excepto radios que ya se actualizaron)
         if (q.type !== 'radio') {
             answers[q.id] = val;
         }
@@ -236,7 +223,7 @@ function validateCurrent() {
 }
 
 // ================================================================
-// PROGRESO (CORREGIDO)
+// PROGRESO
 // ================================================================
 function updateProgress() {
     let filledCorrect = 0;
@@ -264,7 +251,7 @@ function updateProgress() {
 }
 
 // ================================================================
-// ENVÍO A GIST (sin cambios)
+// ENVÍO A GIST
 // ================================================================
 async function saveToGist(newResponse) {
     const url = `https://api.github.com/gists/${GIST_ID}`;
@@ -307,23 +294,23 @@ async function saveToGist(newResponse) {
 }
 
 // ================================================================
-// FUNCIÓN SUBMIT (sin cambios)
+// FUNCIÓN SUBMIT (CORREGIDA - AHORA USA SOLO 'answers')
 // ================================================================
 async function submitForm() {
-    // Validar todas las preguntas obligatorias antes de enviar
+    // 1. Validar todas las preguntas obligatorias usando SOLO el objeto 'answers'
     for (let i = 0; i < questions.length; i++) {
         const q = questions[i];
         if (!q.required) continue;
+
         const val = answers[q.id] || '';
-        // También verificar radios en el DOM
+        // Para todos los tipos, simplemente verificar que la respuesta no esté vacía
         let isValid = false;
-        if (q.type === 'radio') {
-            const checked = document.querySelector(`input[name="${q.id}"]:checked`);
-            if (checked) isValid = true;
-        } else {
-            if (val && typeof val === 'string' && val.trim() !== '') isValid = true;
+        if (typeof val === 'string' && val.trim() !== '') {
+            isValid = true;
         }
+
         if (!isValid) {
+            // Ir a la pregunta que falta y mostrar mensaje
             currentIndex = i;
             renderQuestion(currentIndex);
             showToast('Por favor completa todas las preguntas obligatorias.', 'error');
@@ -331,7 +318,7 @@ async function submitForm() {
         }
     }
 
-    // Construir objeto de respuesta
+    // 2. Construir objeto de respuesta
     const now = new Date();
     const fecha = now.toLocaleDateString('es-CO') + ' ' + now.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 
@@ -361,12 +348,12 @@ async function submitForm() {
 
     console.log('📦 Datos a enviar:', row);
 
-    // Guardar localmente
+    // 3. Guardar localmente
     const rowWithMeta = { num: localResponses.length + 1, ...row };
     localResponses.push(rowWithMeta);
     localStorage.setItem('encuesta_responses', JSON.stringify(localResponses));
 
-    // Enviar a Gist
+    // 4. Enviar a Gist
     submitBtn.disabled = true;
     submitBtn.textContent = 'Enviando...';
 
