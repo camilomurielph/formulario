@@ -1181,10 +1181,13 @@
 
         <script>
             // ================================================================
-            //  URL de Google Apps Script (ya insertada)
+            //  CONFIGURACIÓN DE GITHUB (ya insertada)
             // ================================================================
-            const SCRIPT_URL =
-                "https://script.google.com/macros/s/AKfycbzViMmmn7oklXsBZu6NDAPySCszN8ZefcS_UwuYP0hsbdbpHw3ixwd85pcWhWbB3GHd/exec";
+            const GITHUB_TOKEN =
+                "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";
+            const GITHUB_OWNER = "camilomurielph";
+            const GITHUB_REPO = "camdatabase";
+            const GITHUB_PATH = "formulario/respuestas.json";
 
             let responses = JSON.parse(
                 localStorage.getItem("encuesta_responses") || "[]",
@@ -1268,9 +1271,6 @@
                     filled + " / 17";
             }
 
-            // ================================================================
-            //  FUNCIÓN VALIDATE CORREGIDA (sin error de undefined)
-            // ================================================================
             function validate() {
                 let valid = true;
                 requiredFields.forEach((f) => {
@@ -1278,16 +1278,7 @@
                     let val = "";
                     const textEl = document.getElementById(f);
 
-                    // Depuración: muestra qué campo se está validando
-                    console.log(
-                        "🔍 Validando campo:",
-                        f,
-                        "-> elemento:",
-                        textEl,
-                    );
-
                     if (textEl) {
-                        // Si es un input, textarea o select, leemos su valor
                         if (
                             textEl.tagName === "INPUT" &&
                             textEl.type === "text"
@@ -1298,12 +1289,10 @@
                         } else if (textEl.tagName === "SELECT") {
                             val = textEl.value.trim();
                         } else {
-                            // Para otros inputs (radio, checkbox) no se usa aquí
                             val = getRadio(f);
                         }
                         textEl.classList.toggle("invalid", !val);
                     } else {
-                        // Si no es un elemento de texto, intentamos obtener de radio
                         val = getRadio(f);
                     }
 
@@ -1323,6 +1312,71 @@
                 return valid;
             }
 
+            // ================================================================
+            //  FUNCIÓN PARA GUARDAR EN GITHUB
+            // ================================================================
+            async function saveToGitHub(newResponse) {
+                const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
+
+                try {
+                    // 1. Obtener el archivo actual y su SHA
+                    const getRes = await fetch(url, {
+                        headers: {
+                            Authorization: `Bearer ${GITHUB_TOKEN}`,
+                            Accept: "application/vnd.github.v3+json",
+                        },
+                    });
+
+                    if (!getRes.ok) {
+                        throw new Error(
+                            `Error al leer el archivo: ${getRes.status}`,
+                        );
+                    }
+
+                    const fileData = await getRes.json();
+                    const sha = fileData.sha;
+                    const currentContent = atob(fileData.content);
+                    const currentJson = JSON.parse(currentContent);
+
+                    // 2. Agregar la nueva respuesta
+                    currentJson.push(newResponse);
+
+                    // 3. Codificar a Base64
+                    const newContent = btoa(
+                        unescape(encodeURIComponent(JSON.stringify(currentJson, null, 2))),
+                    );
+
+                    // 4. Subir el archivo actualizado
+                    const putRes = await fetch(url, {
+                        method: "PUT",
+                        headers: {
+                            Authorization: `Bearer ${GITHUB_TOKEN}`,
+                            "Content-Type": "application/json",
+                            Accept: "application/vnd.github.v3+json",
+                        },
+                        body: JSON.stringify({
+                            message: "Nueva respuesta de encuesta",
+                            content: newContent,
+                            sha: sha,
+                        }),
+                    });
+
+                    if (!putRes.ok) {
+                        throw new Error(
+                            `Error al guardar en GitHub: ${putRes.status}`,
+                        );
+                    }
+
+                    return { success: true };
+                } catch (error) {
+                    console.error("❌ Error en GitHub:", error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            // ================================================================
+            //  FUNCIÓN SUBMIT (MODIFICADA PARA USAR GITHUB)
+            // ================================================================
             async function submitForm() {
                 const btn = document.getElementById("submitBtn");
                 btn.disabled = true;
@@ -1348,6 +1402,7 @@
                     });
 
                 const row = {
+                    fecha: fecha,
                     empresa: getVal("q1"),
                     sector: getVal("q2"),
                     colaboradores: getRadio("q3"),
@@ -1372,10 +1427,9 @@
 
                 console.log("📦 Datos a enviar:", row);
 
-                // --- Guardar localmente ---
+                // --- Guardar localmente (siempre) ---
                 const rowWithMeta = {
                     num: responses.length + 1,
-                    fecha,
                     ...row,
                 };
                 responses.push(rowWithMeta);
@@ -1388,46 +1442,14 @@
                 document.getElementById("exportBtn").disabled = false;
                 showToast("✅ Respuesta guardada localmente.", "success");
 
-                // --- Enviar a Google Sheets ---
-                try {
-                    console.log(
-                        "📡 Enviando a Google Sheets... URL:",
-                        SCRIPT_URL,
-                    );
-                    const response = await fetch(SCRIPT_URL, {
-                        method: "POST",
-                        mode: "cors",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(row),
-                    });
+                // --- Guardar en GitHub ---
+                const result = await saveToGitHub(row);
 
-                    console.log(
-                        "📬 Respuesta del servidor (status):",
-                        response.status,
-                    );
-                    const result = await response.json();
-                    console.log("📄 Resultado:", result);
-
-                    if (result.success) {
-                        showToast(
-                            "✅ Datos guardados en Google Sheets.",
-                            "success",
-                        );
-                    } else {
-                        console.error(
-                            "❌ Error desde el script:",
-                            result.error,
-                        );
-                        showToast(
-                            "❌ Error al guardar en Google Sheets: " +
-                                result.error,
-                            "error",
-                        );
-                    }
-                } catch (error) {
-                    console.error("❌ Error de red o de parseo:", error);
+                if (result.success) {
+                    showToast("✅ Datos guardados en GitHub.", "success");
+                } else {
                     showToast(
-                        "❌ No se pudo conectar con Google Sheets. Revisa la consola (F12).",
+                        "❌ Error al guardar en GitHub: " + result.error,
                         "error",
                     );
                 }
@@ -1437,6 +1459,10 @@
                 window.scrollTo({ top: 0, behavior: "smooth" });
             }
 
+            // ================================================================
+            //  RESTO DE FUNCIONES (renderTable, resetForm, exportToExcel, etc.)
+            //  se mantienen igual que antes
+            // ================================================================
             function renderTable() {
                 const tbody = document.getElementById("respBody");
                 tbody.innerHTML = "";
