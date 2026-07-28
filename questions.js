@@ -1,194 +1,112 @@
 const questions = [
-    // ===== SECCIÓN 1 =====
+    // ===== PREGUNTA 1 =====
     {
         id: 'q1',
-        section: 'Sobre tu empresa',
-        text: '¿Cuál es el nombre de tu empresa o emprendimiento?',
-        type: 'text',
-        required: true,
-        placeholder: 'Ej. Estudio Creativo Nombre'
-    },
-    {
-        id: 'q2',
-        section: 'Sobre tu empresa',
-        text: '¿En qué sector opera tu empresa?',
+        section: 'Datos generales',
+        text: '¿Qué hace tu empresa?',
         type: 'select',
         required: true,
         options: [
             'Tecnología / Software',
             'Diseño / Creatividad',
             'Comercio / Retail',
-            'Salud y bienestar',
-            'Educación',
-            'Alimentos y bebidas',
-            'Servicios profesionales',
+            'Salud y Bienestar',
+            'Estética y Belleza',
+            'Alimentos y Bebidas',
+            'Servicios Profesionales',
             'Manufactura / Producción',
-            'Construcción / Inmobiliario',
+            'Construcción / Inmobiliaria',
             'Otro'
-        ]
+        ],
+        otherText: true // habilita campo de texto para "Otro"
     },
+    // ===== PREGUNTA 2 =====
     {
-        id: 'q3',
-        section: 'Sobre tu empresa',
-        text: '¿Cuántos colaboradores tiene?',
-        type: 'radio',
-        required: true,
-        options: ['Solo yo', '2 – 5', '6 – 15', 'Más de 15']
-    },
-    {
-        id: 'q4',
-        section: 'Sobre tu empresa',
-        text: '¿Cuántos años lleva operando?',
-        type: 'radio',
-        required: true,
-        options: ['Menos de 1 año', '1 – 3 años', '3 – 7 años', 'Más de 7 años']
-    },
-    {
-        id: 'q5',
-        section: 'Sobre tu empresa',
+        id: 'q2',
+        section: 'Datos generales',
         text: '¿Cuál es tu cargo o rol dentro de la empresa?',
         type: 'text',
         required: true,
         placeholder: 'Ej. Fundador, Gerente, Director comercial...'
     },
+    // ===== PREGUNTA 3 =====
     {
-        id: 'q6',
-        section: 'Sobre tu empresa',
-        text: '¿Qué tan cómodo/a te sientes usando herramientas digitales?',
+        id: 'q3',
+        section: 'Datos generales',
+        text: '¿Qué tan cómodo te sientes utilizando herramientas digitales?',
         type: 'radio',
         required: true,
-        options: ['Poco cómodo', 'Moderadamente', 'Muy cómodo'],
+        options: ['Poco cómodo', 'Moderadamente cómodo', 'Muy cómodo'],
         inline: true
     },
-
-    // ===== SECCIÓN 2 =====
+    // ===== PREGUNTA 4 =====
     {
-        id: 'q7',
-        section: 'La actividad que más tiempo te quita',
+        id: 'q4',
+        section: 'Actividad que consume tiempo',
         text: '¿Cuál es la actividad que más tiempo te quita en tu semana laboral?',
         type: 'textarea',
         required: true,
-        placeholder: 'Ej. Responder correos de clientes, hacer seguimiento de pagos...',
-        hint: 'Descríbela con tus propias palabras, sin limitarte a opciones predefinidas.'
+        placeholder: 'Ej. Responder correos de clientes, hacer seguimiento de pagos...'
     },
+    // ===== PREGUNTA 5 =====
     {
-        id: 'q8',
-        section: 'La actividad que más tiempo te quita',
+        id: 'q5',
+        section: 'Actividad que consume tiempo',
+        text: '¿Cuánto tiempo dedicas a esa actividad?',
+        type: 'text',
+        required: true,
+        placeholder: 'Ej. 2 horas al día, 10 horas a la semana...'
+    },
+    // ===== PREGUNTA 6 =====
+    {
+        id: 'q6',
+        section: 'Actividad que consume tiempo',
         text: '¿Con qué frecuencia realizas esa actividad?',
         type: 'radio',
         required: true,
-        options: ['Varias veces al día', 'Una vez al día', 'Varias veces a la semana', 'Semanal o mensual']
-    },
-    {
-        id: 'q9',
-        section: 'La actividad que más tiempo te quita',
-        text: '¿Cuánto tiempo dedicas a esa actividad?',
-        type: 'radio',
-        required: true,
-        options: ['Menos de 1 hora/semana', '1 – 3 horas/semana', '4 – 8 horas/semana', 'Más de 8 horas/semana']
-    },
-    {
-        id: 'q10',
-        section: 'La actividad que más tiempo te quita',
-        text: '¿La haces solo/a o involucra a otras personas del equipo?',
-        type: 'radio',
-        required: true,
-        options: ['La hago solo/a', 'Involucra a 1-2 personas', 'Involucra a todo el equipo'],
-        inline: true
-    },
-    {
-        id: 'q11',
-        section: 'La actividad que más tiempo te quita',
-        text: '¿Esa actividad hace parte de tu rol principal o te "roba" tiempo?',
-        type: 'radio',
-        required: true,
-        options: ['Es parte de mi rol principal', 'Me quita tiempo de lo importante', 'Es necesaria pero no estratégica']
-    },
-    {
-        id: 'q12',
-        section: 'La actividad que más tiempo te quita',
-        text: '¿Qué pasa si esa tarea no se hace o se hace mal?',
-        type: 'radio',
-        required: true,
-        options: ['Pérdida de clientes o ventas', 'Problemas operativos o de calidad', 'Estrés, sin consecuencias graves', 'Poco impacto real']
-    },
-    {
-        id: 'q13',
-        section: 'La actividad que más tiempo te quita',
-        text: '¿Los resultados de esa actividad son fáciles de medir?',
-        type: 'radio',
-        required: true,
-        options: ['Sí, claramente', 'A veces', 'No, es difícil de medir'],
-        inline: true
-    },
-
-    // ===== SECCIÓN 3 =====
-    {
-        id: 'q14',
-        section: 'Herramientas actuales y mejoras',
-        text: '¿Qué herramientas o métodos usas actualmente para hacer esa tarea?',
-        type: 'textarea',
-        required: true,
-        placeholder: 'Ej. WhatsApp + hoja de cálculo + recordatorios en el celular...',
-        hint: 'Papel, Excel, WhatsApp, software específico, etc.'
-    },
-    {
-        id: 'q15',
-        section: 'Herramientas actuales y mejoras',
-        text: '¿Ya intentaste alguna vez optimizarla o delegarla? ¿Qué pasó?',
-        type: 'textarea',
-        required: false,
-        placeholder: 'Ej. Intenté contratar alguien pero salía muy costoso...'
-    },
-    {
-        id: 'q16',
-        section: 'Herramientas actuales y mejoras',
-        text: '¿Cuánto estarías dispuesto/a a pagar mensualmente por una herramienta que mejore esa tarea?',
-        type: 'radio',
-        required: true,
         options: [
-            'No pagaría — solo si es gratuita',
-            'Hasta $30.000 COP / mes',
-            '$30.000 – $100.000 COP / mes',
-            'Más de $100.000 COP / mes',
-            'Depende del valor que genere'
+            'Varias veces al día',
+            'Una vez al día',
+            'Varias veces a la semana',
+            'Una vez a la semana',
+            'Una vez al mes'
         ]
     },
-
-    // ===== SECCIÓN 4 =====
+    // ===== PREGUNTA 7 =====
     {
-        id: 'q17',
-        section: 'Decisión de compra',
-        text: '¿Quién toma la decisión de adoptar una nueva herramienta en tu empresa?',
+        id: 'q7',
+        section: 'Actividad que consume tiempo',
+        text: '¿Esta actividad con quién la realizas?',
         type: 'radio',
         required: true,
-        options: ['Yo mismo/a', 'En equipo', 'Otra persona'],
+        options: ['Solo/a', 'En equipo'],
         inline: true
     },
+    // ===== PREGUNTA 8 =====
     {
-        id: 'q18',
-        section: 'Decisión de compra',
-        text: '¿Han pagado antes por algún software o herramienta de gestión?',
-        type: 'radio',
+        id: 'q8',
+        section: 'Actividad que consume tiempo',
+        text: '¿Qué impacto negativo tiene la no realización de esta actividad?',
+        type: 'textarea',
         required: true,
-        options: ['Sí, actualmente pagamos', 'Lo hemos hecho antes, ya no', 'No, solo herramientas gratuitas']
+        placeholder: 'Ej. Pérdida de clientes, retrasos en proyectos, estrés...'
     },
-
-    // ===== SECCIÓN 5 =====
+    // ===== PREGUNTA 9 =====
     {
-        id: 'q19',
-        section: 'Cierre',
-        text: 'Ciudad / región',
-        type: 'text',
-        required: false,
-        placeholder: 'Ej. Cali, Bogotá, Medellín...'
+        id: 'q9',
+        section: 'Herramientas y mejoras',
+        text: '¿Qué herramienta o método utilizas para hacer esa actividad?',
+        type: 'textarea',
+        required: true,
+        placeholder: 'Ej. Excel, WhatsApp, papel, software específico...'
     },
+    // ===== PREGUNTA 10 =====
     {
-        id: 'q20',
-        section: 'Cierre',
-        text: '¿Cómo llegaste a esta encuesta?',
-        type: 'select',
+        id: 'q10',
+        section: 'Herramientas y mejoras',
+        text: '¿Has intentado optimizar esta actividad previamente? ¿qué pasó?',
+        type: 'textarea',
         required: false,
-        options: ['Instagram / redes sociales', 'Recomendación de alguien', 'WhatsApp', 'Evento / comunidad', 'Otro']
+        placeholder: 'Ej. Contraté a alguien, probé una herramienta, pero no funcionó...'
     }
 ];
