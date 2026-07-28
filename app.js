@@ -73,15 +73,25 @@ function renderQuestion(index) {
             html += `<select id="${q.id}">`;
             html += `<option value="" disabled ${!value ? 'selected' : ''}>Selecciona una opción</option>`;
             q.options.forEach(opt => {
-                html += `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`;
+                const selected = (value === opt) ? 'selected' : '';
+                html += `<option value="${opt}" ${selected}>${opt}</option>`;
             });
             html += `</select>`;
+            // Si tiene "Otro" con texto, añadir campo adicional
+            if (q.otherText) {
+                const showOther = (value && !q.options.includes(value)) ? 'block' : 'none';
+                html += `
+                    <div id="other-text-container-${q.id}" style="margin-top: 8px; display: ${showOther};">
+                        <input type="text" id="${q.id}_other" placeholder="Especifica tu sector..." value="${q.options.includes(value) ? '' : value}" />
+                    </div>
+                `;
+            }
             break;
         case 'radio':
             const inlineClass = q.inline ? 'inline' : '';
             html += `<div class="options ${inlineClass}" id="${q.id}">`;
             q.options.forEach(opt => {
-                const checked = value === opt ? 'checked' : '';
+                const checked = (value === opt) ? 'checked' : '';
                 html += `
                     <label class="opt-label ${checked ? 'selected' : ''}">
                         <input type="radio" name="${q.id}" value="${opt}" ${checked} />
@@ -96,7 +106,7 @@ function renderQuestion(index) {
     html += `<div class="field-error" id="err-${q.id}">Este campo es obligatorio.</div>`;
     container.innerHTML = html;
 
-    // Event listeners
+    // ====== EVENT LISTENERS ======
     if (q.type === 'text' || q.type === 'textarea') {
         const input = document.getElementById(q.id);
         if (input) {
@@ -108,10 +118,42 @@ function renderQuestion(index) {
     } else if (q.type === 'select') {
         const select = document.getElementById(q.id);
         if (select) {
+            // Manejar cambio en el select
             select.addEventListener('change', (e) => {
-                answers[q.id] = e.target.value;
-                updateProgress();
+                const selected = e.target.value;
+                if (selected === 'Otro' && q.otherText) {
+                    // Mostrar campo de texto
+                    const containerEl = document.getElementById(`other-text-container-${q.id}`);
+                    if (containerEl) containerEl.style.display = 'block';
+                    // Aún no guardamos, esperamos el input del texto
+                } else {
+                    // Ocultar campo de texto
+                    const containerEl = document.getElementById(`other-text-container-${q.id}`);
+                    if (containerEl) containerEl.style.display = 'none';
+                    // Guardar la opción seleccionada
+                    answers[q.id] = selected;
+                    updateProgress();
+                }
             });
+            // Si hay un campo de texto adicional, escuchar su input
+            if (q.otherText) {
+                const otherInput = document.getElementById(`${q.id}_other`);
+                if (otherInput) {
+                    otherInput.addEventListener('input', (e) => {
+                        const val = e.target.value.trim();
+                        if (val) {
+                            answers[q.id] = val; // guardar el texto personalizado
+                        } else {
+                            // Si está vacío, volver a la opción "Otro" (o vacío)
+                            const selectEl = document.getElementById(q.id);
+                            if (selectEl && selectEl.value === 'Otro') {
+                                answers[q.id] = 'Otro';
+                            }
+                        }
+                        updateProgress();
+                    });
+                }
+            }
         }
     } else if (q.type === 'radio') {
         const radios = document.querySelectorAll(`input[name="${q.id}"]`);
@@ -185,6 +227,18 @@ function validateCurrent() {
         const select = document.getElementById(q.id);
         if (select) {
             val = select.value;
+            // Si es "Otro" con texto, verificar el campo adicional
+            if (q.otherText && val === 'Otro') {
+                const otherInput = document.getElementById(`${q.id}_other`);
+                if (otherInput) {
+                    const otherVal = otherInput.value.trim();
+                    if (otherVal) {
+                        val = otherVal; // consideramos válido si tiene texto
+                    } else {
+                        val = ''; // inválido si no hay texto
+                    }
+                }
+            }
             select.classList.toggle('invalid', !val);
         }
     } else if (q.type === 'radio') {
@@ -208,6 +262,11 @@ function validateCurrent() {
         if (q.type === 'text' || q.type === 'textarea' || q.type === 'select') {
             const el = document.getElementById(q.id);
             if (el) el.classList.add('invalid');
+            // Si es select con "Otro", marcar también el otro input
+            if (q.otherText) {
+                const otherInput = document.getElementById(`${q.id}_other`);
+                if (otherInput) otherInput.classList.add('invalid');
+            }
         }
         return false;
     } else {
@@ -215,8 +274,18 @@ function validateCurrent() {
         if (q.type === 'text' || q.type === 'textarea' || q.type === 'select') {
             const el = document.getElementById(q.id);
             if (el) el.classList.remove('invalid');
+            if (q.otherText) {
+                const otherInput = document.getElementById(`${q.id}_other`);
+                if (otherInput) otherInput.classList.remove('invalid');
+            }
         }
-        if (q.type !== 'radio') answers[q.id] = val;
+        // Guardar el valor solo si no es "Otro" (ya se guarda en el evento)
+        if (q.type !== 'radio' && !(q.type === 'select' && q.otherText && val !== 'Otro')) {
+            // Para select normal, guardar; para "Otro" ya se guarda en el evento
+            if (q.type === 'select' && !q.otherText) {
+                answers[q.id] = val;
+            }
+        }
         return true;
     }
 }
@@ -229,6 +298,16 @@ function updateProgress() {
         if (q.type === 'radio') {
             const checked = document.querySelector(`input[name="${q.id}"]:checked`);
             if (checked) { filledCorrect++; return; }
+        }
+        if (q.type === 'select' && q.otherText) {
+            // Para "Otro", considerar válido si hay texto en el campo adicional
+            const selectVal = document.getElementById(q.id)?.value;
+            if (selectVal === 'Otro') {
+                const otherVal = document.getElementById(`${q.id}_other`)?.value?.trim();
+                if (otherVal) { filledCorrect++; return; }
+            } else if (selectVal) {
+                filledCorrect++; return;
+            }
         }
         if (val && typeof val === 'string' && val.trim() !== '') filledCorrect++;
     });
@@ -284,7 +363,16 @@ async function submitForm() {
     for (let i = 0; i < questions.length; i++) {
         const q = questions[i];
         if (!q.required) continue;
-        const val = answers[q.id] || '';
+        let val = answers[q.id] || '';
+        // Validación especial para "Otro"
+        if (q.type === 'select' && q.otherText && val === 'Otro') {
+            const otherInput = document.getElementById(`${q.id}_other`);
+            if (otherInput) {
+                const otherVal = otherInput.value.trim();
+                if (otherVal) val = otherVal;
+                else val = '';
+            }
+        }
         let isValid = false;
         if (typeof val === 'string' && val.trim() !== '') isValid = true;
         if (!isValid) {
@@ -300,26 +388,16 @@ async function submitForm() {
 
     const row = {
         fecha: fecha,
-        empresa: answers.q1 || '',
-        sector: answers.q2 || '',
-        colaboradores: answers.q3 || '',
-        anos: answers.q4 || '',
-        cargo: answers.q5 || '',
-        nivelDigital: answers.q6 || '',
-        actividad: answers.q7 || '',
-        frecuencia: answers.q8 || '',
-        tiempo: answers.q9 || '',
-        equipo: answers.q10 || '',
-        rol: answers.q11 || '',
-        impacto: answers.q12 || '',
-        medible: answers.q13 || '',
-        herramientas: answers.q14 || '',
-        intentos: answers.q15 || '',
-        pago: answers.q16 || '',
-        decision: answers.q17 || '',
-        pagadoAntes: answers.q18 || '',
-        ciudad: answers.q19 || '',
-        canal: answers.q20 || '',
+        q1: answers.q1 || '',
+        q2: answers.q2 || '',
+        q3: answers.q3 || '',
+        q4: answers.q4 || '',
+        q5: answers.q5 || '',
+        q6: answers.q6 || '',
+        q7: answers.q7 || '',
+        q8: answers.q8 || '',
+        q9: answers.q9 || '',
+        q10: answers.q10 || ''
     };
 
     console.log('📦 Datos a enviar:', row);
@@ -423,12 +501,18 @@ function renderSummary(data) {
 
     const total = data.length;
     const sectors = {};
-    data.forEach(r => { sectors[r.sector] = (sectors[r.sector] || 0) + 1; });
+    data.forEach(r => {
+        const s = r.q1 || 'Sin especificar';
+        sectors[s] = (sectors[s] || 0) + 1;
+    });
     const topSector = Object.entries(sectors).sort((a,b) => b[1] - a[1])[0];
 
-    const colaboradores = {};
-    data.forEach(r => { colaboradores[r.colaboradores] = (colaboradores[r.colaboradores] || 0) + 1; });
-    const topColab = Object.entries(colaboradores).sort((a,b) => b[1] - a[1])[0];
+    const cargos = {};
+    data.forEach(r => {
+        const c = r.q2 || 'Sin especificar';
+        cargos[c] = (cargos[c] || 0) + 1;
+    });
+    const topCargo = Object.entries(cargos).sort((a,b) => b[1] - a[1])[0];
 
     adminContent.innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 1.5rem;">
@@ -441,8 +525,8 @@ function renderSummary(data) {
                 <div style="color: var(--text-secondary);">Sector más común</div>
             </div>
             <div style="background: var(--bg-input); padding: 1rem; border-radius: var(--radius); text-align: center;">
-                <div style="font-size: 1.2rem; font-weight: 600; color: var(--accent);">${topColab ? topColab[0] : '—'}</div>
-                <div style="color: var(--text-secondary);">Tamaño de equipo más común</div>
+                <div style="font-size: 1.2rem; font-weight: 600; color: var(--accent);">${topCargo ? topCargo[0] : '—'}</div>
+                <div style="color: var(--text-secondary);">Cargo más común</div>
             </div>
         </div>
         <p style="color: var(--text-secondary); text-align: center;">Selecciona una opción arriba para ver más detalles.</p>
@@ -458,8 +542,8 @@ function renderTable(data) {
         return;
     }
 
-    const headers = ['#', 'Fecha', 'Empresa', 'Sector', 'Colaboradores', 'Años', 'Cargo', 'Nivel digital', 'Actividad', 'Frecuencia', 'Tiempo', 'Equipo', 'Rol', 'Impacto', 'Medible', 'Herramientas', 'Intentos', 'Pago', 'Decisión', 'Pagado antes', 'Ciudad', 'Canal'];
-    const keys = ['num', 'fecha', 'empresa', 'sector', 'colaboradores', 'anos', 'cargo', 'nivelDigital', 'actividad', 'frecuencia', 'tiempo', 'equipo', 'rol', 'impacto', 'medible', 'herramientas', 'intentos', 'pago', 'decision', 'pagadoAntes', 'ciudad', 'canal'];
+    const headers = ['#', 'Fecha', 'Sector', 'Cargo', 'Nivel digital', 'Actividad', 'Tiempo', 'Frecuencia', 'Quién', 'Impacto', 'Herramienta', 'Optimización'];
+    const keys = ['num', 'fecha', 'q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];
 
     let html = `<div class="table-responsive"><table class="admin-table"><thead><tr>`;
     headers.forEach(h => html += `<th>${h}</th>`);
@@ -500,23 +584,8 @@ function renderBlocks(data) {
         return;
     }
 
-    const sectors = [...new Set(data.map(r => r.sector).filter(Boolean))];
-    const colaboradores = [...new Set(data.map(r => r.colaboradores).filter(Boolean))];
-
     let html = `
         <div class="filters-bar">
-            <label>Filtrar por sector:
-                <select id="filter-sector">
-                    <option value="">Todos</option>
-                    ${sectors.map(s => `<option value="${s}">${s}</option>`).join('')}
-                </select>
-            </label>
-            <label>Colaboradores:
-                <select id="filter-colab">
-                    <option value="">Todos</option>
-                    ${colaboradores.map(c => `<option value="${c}">${c}</option>`).join('')}
-                </select>
-            </label>
             <label>Fecha desde:
                 <input type="date" id="filter-date-from" />
             </label>
@@ -538,14 +607,10 @@ function renderBlocks(data) {
     adminContent.innerHTML = html;
 
     function renderFilteredBlocks() {
-        const sectorFilter = document.getElementById('filter-sector').value;
-        const colabFilter = document.getElementById('filter-colab').value;
         const dateFrom = document.getElementById('filter-date-from').value;
         const dateTo = document.getElementById('filter-date-to').value;
 
         let filtered = data.filter(r => {
-            if (sectorFilter && r.sector !== sectorFilter) return false;
-            if (colabFilter && r.colaboradores !== colabFilter) return false;
             if (dateFrom) {
                 const d = new Date(r.fecha.split(' ')[0].split('/').reverse().join('-'));
                 if (d < new Date(dateFrom)) return false;
@@ -566,7 +631,7 @@ function renderBlocks(data) {
         container.innerHTML = filtered.map((r, idx) => {
             const globalIdx = data.indexOf(r);
             const isSelected = selectedBlocks.has(globalIdx);
-            const title = `${r.empresa || 'Sin empresa'} · ${r.fecha || 'Sin fecha'}`;
+            const title = `${r.q1 || 'Sin sector'} · ${r.fecha || 'Sin fecha'}`;
             return `
                 <div class="response-block ${isSelected ? 'selected' : ''}" data-index="${globalIdx}">
                     <div class="block-header">
@@ -575,7 +640,7 @@ function renderBlocks(data) {
                         <div class="block-date">#${globalIdx + 1}</div>
                     </div>
                     <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                        Sector: ${r.sector || '—'} · Colab: ${r.colaboradores || '—'}
+                        Cargo: ${r.q2 || '—'} · Nivel digital: ${r.q3 || '—'}
                     </div>
                     <div class="block-actions">
                         <button class="view-block-btn" data-index="${globalIdx}">👁️ Ver</button>
@@ -615,13 +680,9 @@ function renderBlocks(data) {
         });
     }
 
-    document.getElementById('filter-sector').addEventListener('change', renderFilteredBlocks);
-    document.getElementById('filter-colab').addEventListener('change', renderFilteredBlocks);
     document.getElementById('filter-date-from').addEventListener('change', renderFilteredBlocks);
     document.getElementById('filter-date-to').addEventListener('change', renderFilteredBlocks);
     document.getElementById('clear-filters').addEventListener('click', () => {
-        document.getElementById('filter-sector').value = '';
-        document.getElementById('filter-colab').value = '';
         document.getElementById('filter-date-from').value = '';
         document.getElementById('filter-date-to').value = '';
         renderFilteredBlocks();
@@ -701,26 +762,16 @@ async function deleteResponse(index) {
 
 function showResponseModal(response) {
     const fields = [
-        ['Empresa', 'empresa'],
-        ['Sector', 'sector'],
-        ['Colaboradores', 'colaboradores'],
-        ['Años operando', 'anos'],
-        ['Cargo', 'cargo'],
-        ['Nivel digital', 'nivelDigital'],
-        ['Actividad que más tiempo quita', 'actividad'],
-        ['Frecuencia', 'frecuencia'],
-        ['Tiempo dedicado', 'tiempo'],
-        ['¿La hace solo?', 'equipo'],
-        ['¿Parte del rol?', 'rol'],
-        ['Impacto si no se hace', 'impacto'],
-        ['¿Resultados medibles?', 'medible'],
-        ['Herramientas actuales', 'herramientas'],
-        ['Intentos anteriores', 'intentos'],
-        ['Disposición a pagar', 'pago'],
-        ['Quién decide', 'decision'],
-        ['¿Han pagado software?', 'pagadoAntes'],
-        ['Ciudad', 'ciudad'],
-        ['Canal de llegada', 'canal']
+        ['Sector', 'q1'],
+        ['Cargo', 'q2'],
+        ['Nivel digital', 'q3'],
+        ['Actividad que consume tiempo', 'q4'],
+        ['Tiempo dedicado', 'q5'],
+        ['Frecuencia', 'q6'],
+        ['¿Con quién?', 'q7'],
+        ['Impacto negativo', 'q8'],
+        ['Herramienta o método', 'q9'],
+        ['Intentos de optimización', 'q10']
     ];
 
     let html = `<div style="margin-bottom: 1rem; color: var(--text-secondary);">Fecha: ${response.fecha || '—'}</div>`;
@@ -778,26 +829,16 @@ async function downloadExcel(data) {
     const columns = [
         { header: '#', key: 'num', width: 6 },
         { header: 'Fecha', key: 'fecha', width: 18 },
-        { header: 'Empresa', key: 'empresa', width: 22 },
-        { header: 'Sector', key: 'sector', width: 22 },
-        { header: 'Colaboradores', key: 'colaboradores', width: 16 },
-        { header: 'Años operando', key: 'anos', width: 16 },
-        { header: 'Cargo', key: 'cargo', width: 22 },
-        { header: 'Nivel digital', key: 'nivelDigital', width: 16 },
-        { header: 'Actividad que más tiempo quita', key: 'actividad', width: 45 },
-        { header: 'Frecuencia', key: 'frecuencia', width: 20 },
-        { header: 'Tiempo dedicado', key: 'tiempo', width: 18 },
-        { header: '¿La hace solo?', key: 'equipo', width: 20 },
-        { header: '¿Parte del rol?', key: 'rol', width: 22 },
-        { header: 'Impacto si no se hace', key: 'impacto', width: 25 },
-        { header: '¿Resultados medibles?', key: 'medible', width: 20 },
-        { header: 'Herramientas actuales', key: 'herramientas', width: 45 },
-        { header: 'Intentos anteriores', key: 'intentos', width: 35 },
-        { header: 'Disposición a pagar', key: 'pago', width: 28 },
-        { header: 'Quién decide', key: 'decision', width: 18 },
-        { header: '¿Han pagado software?', key: 'pagadoAntes', width: 22 },
-        { header: 'Ciudad', key: 'ciudad', width: 20 },
-        { header: 'Canal de llegada', key: 'canal', width: 22 }
+        { header: 'Sector', key: 'q1', width: 22 },
+        { header: 'Cargo', key: 'q2', width: 22 },
+        { header: 'Nivel digital', key: 'q3', width: 18 },
+        { header: 'Actividad que consume tiempo', key: 'q4', width: 45 },
+        { header: 'Tiempo dedicado', key: 'q5', width: 18 },
+        { header: 'Frecuencia', key: 'q6', width: 20 },
+        { header: '¿Con quién?', key: 'q7', width: 16 },
+        { header: 'Impacto negativo', key: 'q8', width: 35 },
+        { header: 'Herramienta o método', key: 'q9', width: 35 },
+        { header: 'Intentos de optimización', key: 'q10', width: 45 }
     ];
 
     worksheet.columns = columns;
@@ -845,33 +886,23 @@ async function downloadExcel(data) {
         const rowData = [
             idx + 1,
             r.fecha || '',
-            r.empresa || '',
-            r.sector || '',
-            r.colaboradores || '',
-            r.anos || '',
-            r.cargo || '',
-            r.nivelDigital || '',
-            r.actividad || '',
-            r.frecuencia || '',
-            r.tiempo || '',
-            r.equipo || '',
-            r.rol || '',
-            r.impacto || '',
-            r.medible || '',
-            r.herramientas || '',
-            r.intentos || '',
-            r.pago || '',
-            r.decision || '',
-            r.pagadoAntes || '',
-            r.ciudad || '',
-            r.canal || ''
+            r.q1 || '',
+            r.q2 || '',
+            r.q3 || '',
+            r.q4 || '',
+            r.q5 || '',
+            r.q6 || '',
+            r.q7 || '',
+            r.q8 || '',
+            r.q9 || '',
+            r.q10 || ''
         ];
 
         row.values = rowData;
 
         row.eachCell((cell) => {
             cell.style = { ...dataStyle };
-            if (cell.col === 1 || cell.col === 2 || cell.col === 5 || cell.col === 6) {
+            if (cell.col === 1 || cell.col === 2) {
                 cell.style.alignment = { horizontal: 'center', vertical: 'middle' };
             }
         });
